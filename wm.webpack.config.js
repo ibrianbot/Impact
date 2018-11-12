@@ -1,18 +1,18 @@
 const express = require("express")
 
 module.exports = {
-  entry: "./index.js",
+  entry: "./wm.index.js",
   mode: "development",
   devServer: {
-    contentBase: __dirname + "/game",
+    contentBase: __dirname + "/weltmeister",
     before: (app, server) => {
       app.use("/media", express.static('./media'));
     }
   },
   output: {
-    path: __dirname + "/dist",
+    path: __dirname + "/wm/dist",
     filename: "bundle.js",
-    publicPath: "/dist/"
+    publicPath: "/wm/dist/"
   },
   module: {
     rules: [

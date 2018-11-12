@@ -1,2 +1,2 @@
 
-import "./lib/game/main"
+import "./game/main"

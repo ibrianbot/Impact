@@ -1,5 +1,5 @@
-import Entiy from "../impact/entity"
-import {AnimationSheet} from "../impact/animation"
+import Entiy from "../lib/entity"
+import {AnimationSheet} from "../lib/animation"
 
 class Player extends Entiy {
 
@@ -14,7 +14,7 @@ class Player extends Entiy {
   }
 
   // update(){
-
+  //   super.update()
   // }
 
 }

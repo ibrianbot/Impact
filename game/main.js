@@ -1,6 +1,6 @@
-import Game from "../impact/game"
-import Font from "../impact/font"
-import IG from "../impact/impact"
+import Game from "../lib/game"
+import Font from "../lib/font"
+import IG from "../lib/impact"
 
 
 import Player from "./player"
@@ -8,7 +8,7 @@ import Player from "./player"
 class MyGame extends Game {
 	
 	// Load a font
-	font = new Font( 'media/04b03.font.png' )
+	font = new Font( '/media/04b03.font.png' )
 	
 	constructor() {
 		super()
