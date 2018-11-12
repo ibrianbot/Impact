@@ -1,43 +1,40 @@
-ig.module(
-	'weltmeister.edit-entities'
-)
-.requires(
-	'impact.game',
-	'impact.background-map',
-	'weltmeister.config',
-	'weltmeister.tile-select',
-	'weltmeister.entities'
-)
-.defines(function(){ "use strict";
+import Game from "../lib/game"
+import Weltmeister from "./weltmeister"
+import BackgroundMap from "../lib/background-map"
+import Config from "./config"
+import TileSelect from "./tile-select"
+
+// .requires(
+// 	'weltmeister.entities'
+// )
+class EditEntities  {
+	visible = true
+	active = true
 	
-wm.EditEntities = ig.Class.extend({
-	visible: true,
-	active: true,
+	div = null
+	hotkey = -1
+	ignoreLastClick = false
+	name = 'entities'
 	
-	div: null,
-	hotkey: -1,
-	ignoreLastClick: false,
-	name: 'entities',
-	
-	entities: [],
-	namedEntities: {},
-	selectedEntity: null,
-	entityClasses: {},
-	menuDiv: null,
-	selector: {size:{x:2, y:2}, pos:{x:0,y:0}, offset:{x:0,y:0}},
-	wasSelectedOnScaleBorder: false,
-	gridSize: wm.config.entityGrid,
-	entityDefinitions: null,
+	entities = []
+	namedEntities = {}
+	selectedEntity = null
+	entityClasses = {}
+	menuDiv = null
+	selector = {size:{x:2, y:2}, pos:{x:0,y:0}, offset:{x:0,y:0}}
+	wasSelectedOnScaleBorder = false
+	gridSize = Config.entityGrid
+	entityDefinitions = null
 	
 	
 	
-	init: function( div ) {
+	constructor( div ) {
 		this.div = div;
 		div.bind( 'mouseup', this.click.bind(this) );
 		this.div.children('.visible').bind( 'mousedown', this.toggleVisibilityClick.bind(this) );
 		
 		this.menu = $('#entityMenu');
-		this.importEntityClass( wm.entityModules );
+		this.importEntityClass( Weltmeister.entityModules );
 		this.entityDefinitions = $('#entityDefinitions');
 		
 		$('#entityKey').bind( 'keydown', function(ev){ 
@@ -48,18 +45,18 @@ wm.EditEntities = ig.Class.extend({
 			return true;
 		});
 		$('#entityValue').bind( 'keydown', this.setEntitySetting.bind(this) );
-	},
+	}
 	
 	
-	clear: function() {
+	clear() {
 		this.entities = [];
 		this.selectEntity( null );
-	},
+	}
 	
 	
-	sort: function() {
+	sort() {
 		this.entities.sort( ig.Game.SORT.Z_INDEX );
-	},
+	}
 	
 	
 	
@@ -68,16 +65,16 @@ wm.EditEntities = ig.Class.extend({
 	// Loading, Saving
 	
 	
-	fileNameToClassName: function( name ) {
+	fileNameToClassName( name ) {
 		var typeName = '-' + name.replace(/^.*\/|\.js/g,'');
 		typeName = typeName.replace(/-(\w)/g, function( m, a ) {
 			return a.toUpperCase();
 		});
 		return 'Entity' + typeName;
-	},
+	}
 	
 	
-	importEntityClass: function( modules ) {
+	importEntityClass( modules ) {
 		var unloadedClasses = [];
 		for( var m in modules ) {
 			var className = this.fileNameToClassName(modules[m]);
@@ -109,15 +106,15 @@ wm.EditEntities = ig.Class.extend({
 				+ unloadedClasses.join( '\n' );
 			alert( warning );
 		}
-	},
+	}
 	
 	
-	getEntityByName: function( name ) {
+	getEntityByName( name ) {
 		return this.namedEntities[name];
-	},
+	}
 	
 	
-	getSaveData: function() {
+	getSaveData() {
 		var ents = [];
 		for( var i = 0; i < this.entities.length; i++ ) {
 			var ent = this.entities[i];
@@ -135,7 +132,7 @@ wm.EditEntities = ig.Class.extend({
 			ents.push( data );
 		}
 		return ents;
-	},		
+	}
 	
 	
 	
@@ -144,7 +141,7 @@ wm.EditEntities = ig.Class.extend({
 	// Selecting
 	
 	
-	selectEntityAt: function( x, y ) {
+	selectEntityAt( x, y ) {
 		this.selector.pos = { x: x, y: y };
 		
 		// Find all possible selections
@@ -174,10 +171,10 @@ wm.EditEntities = ig.Class.extend({
 		this.selectEntity( ent );
 		this.wasSelectedOnScaleBorder = this.isOnScaleBorder( ent, this.selector );
 		return ent;
-	},
+	}
 	
 	
-	selectEntity: function( entity ) {
+	selectEntity( entity ) {
 		if( entity && entity != this.selectedEntity ) {
 			this.selectedEntity = entity;
 			$('#entitySettings').fadeOut(100,(function(){
@@ -194,7 +191,7 @@ wm.EditEntities = ig.Class.extend({
 		this.selectedEntity = entity;
 		$('#entityKey').val('');
 		$('#entityValue').val('');
-	},
+	}
 	
 	
 
@@ -203,7 +200,7 @@ wm.EditEntities = ig.Class.extend({
 	// Creating, Deleting, Moving
 	
 	
-	deleteSelectedEntity: function() {
+	deleteSelectedEntity() {
 		if( !this.selectedEntity ) {
 			return false;
 		}
@@ -213,18 +210,18 @@ wm.EditEntities = ig.Class.extend({
 		this.removeEntity( this.selectedEntity );
 		this.selectEntity( null );
 		return true;
-	},
+	}
 	
 	
-	removeEntity: function( ent ) {
+	removeEntity( ent ) {
 		if( ent.name ) {
 			delete this.namedEntities[ent.name];
 		}
 		this.entities.erase( ent );
-	},
+	}
 	
 	
-	cloneSelectedEntity: function() {
+	cloneSelectedEntity() {
 		if( !this.selectedEntity ) {
 			return false;
 		}
@@ -243,10 +240,10 @@ wm.EditEntities = ig.Class.extend({
 		ig.game.undo.commitEntityCreate( newEntity );
 		
 		return true;
-	},
+	}
 	
 	
-	dragOnSelectedEntity: function( x, y ) {
+	dragOnSelectedEntity( x, y ) {
 		if( !this.selectedEntity ) {
 			return false;
 		}
@@ -262,10 +259,10 @@ wm.EditEntities = ig.Class.extend({
 		
 		ig.game.undo.pushEntityEdit( this.selectedEntity );
 		return true;
-	},
+	}
 	
 	
-	moveSelectedEntity: function( x, y ) {
+	moveSelectedEntity( x, y ) {
 		x = 
 			Math.round( (x - this.selector.offset.x ) / this.gridSize )
 			* this.gridSize + this.selectedEntity.offset.x;
@@ -281,10 +278,10 @@ wm.EditEntities = ig.Class.extend({
 			this.selectedEntity.pos.x = x;
 			this.selectedEntity.pos.y = y;
 		}
-	},
+	}
 	
 	
-	scaleSelectedEntity: function( x, y ) {
+	scaleSelectedEntity( x, y ) {
 		var scale = this.wasSelectedOnScaleBorder;
 			
 		var w = Math.round( x / this.gridSize ) * this.gridSize - this.selectedEntity.pos.x;
@@ -321,10 +318,10 @@ wm.EditEntities = ig.Class.extend({
 		this.selectedEntity._wmSettings.size.y = this.selectedEntity.size.y;
 		
 		this.loadEntitySettings();
-	},
+	}
 	
 	
-	newEntityClick: function( ev ) {
+	newEntityClick( ev ) {
 		this.hideMenu();
 		var newEntity = this.spawnEntity( ev.target.id, 0, 0, {} );
 		this.selectEntity( newEntity );
@@ -332,10 +329,10 @@ wm.EditEntities = ig.Class.extend({
 		ig.editor.setModified();
 		
 		ig.game.undo.commitEntityCreate( newEntity );
-	},
+	}
 	
 	
-	spawnEntity: function( className, x, y, settings ) {
+	spawnEntity( className, x, y, settings ) {
 		settings = settings || {};
 		var entityClass = ig.global[ className ];
 		if( entityClass ) {
@@ -354,10 +351,10 @@ wm.EditEntities = ig.Class.extend({
 			return newEntity;
 		}
 		return null;
-	},
+	}
 	
 	
-	isOnScaleBorder: function( entity, selector ) {	
+	isOnScaleBorder( entity, selector ) {	
 		var border = 2;
 		var w = selector.pos.x - entity.pos.x;
 		var h = selector.pos.y - entity.pos.y;
@@ -369,7 +366,7 @@ wm.EditEntities = ig.Class.extend({
 		if( h > entity.size.y - border ) return 's';
 		
 		return false;
-	},
+	}
 	
 	
 	
@@ -378,7 +375,7 @@ wm.EditEntities = ig.Class.extend({
 	// Settings
 	
 	
-	loadEntitySettings: function(ent) {
+	loadEntitySettings(ent) {
 		
 		if( !this.selectedEntity ) {
 			return;
@@ -394,10 +391,10 @@ wm.EditEntities = ig.Class.extend({
 		$('#entityClass').text( className );
 		
 		$('.entityDefinition').bind( 'mouseup', this.selectEntitySetting );
-	},
+	}
 	
 	
-	loadEntitySettingsRecursive: function( settings, path ) {
+	loadEntitySettingsRecursive( settings, path ) {
 		path = path || "";
 		var html = "";
 		for( var key in settings ) {
@@ -411,10 +408,10 @@ wm.EditEntities = ig.Class.extend({
 		}
 		
 		return html;
-	},
+	}
 	
 	
-	setEntitySetting: function( ev ) {
+	setEntitySetting( ev ) {
 		if( ev.which != 13 ) {
 			return true;
 		}
@@ -455,10 +452,10 @@ wm.EditEntities = ig.Class.extend({
 		
 		$('#entityKey').focus(); 
 		return false;
-	},
+	}
+
 	
-	
-	writeSettingAtPath: function( root, path, value ) {
+	writeSettingAtPath( root, path, value ) {
 		path = path.split('.');
 		var cur = root;
 		for( var i = 0; i < path.length; i++ ) {
@@ -474,10 +471,10 @@ wm.EditEntities = ig.Class.extend({
 		}
 		
 		this.trimObject( root );
-	},
+	}
 	
 	
-	trimObject: function( obj ) {
+	trimObject( obj ) {
 		var isEmpty = true;
 		for( var i in obj ) {
 			if(
@@ -493,14 +490,14 @@ wm.EditEntities = ig.Class.extend({
 		}
 		
 		return isEmpty;
-	},
+	}
 	
 	
-	selectEntitySetting: function( ev ) {
+	selectEntitySetting( ev ) {
 		$('#entityKey').val( $(this).children('.key').text() );
 		$('#entityValue').val( $(this).children('.value').text() );
 		$('#entityValue').select();
-	},
+	}
 	
 	
 	
@@ -510,39 +507,39 @@ wm.EditEntities = ig.Class.extend({
 	// -------------------------------------------------------------------------
 	// UI
 	
-	setHotkey: function( hotkey ) {
+	setHotkey( hotkey ) {
 		this.hotkey = hotkey;
 		this.div.attr('title', 'Select Layer ('+this.hotkey+')' );
-	},
+	}
 	
 	
-	showMenu: function( x, y ) {
+	showMenu( x, y ) {
 		this.selector.pos = { 
 			x: Math.round( (x + ig.editor.screen.x) / this.gridSize ) * this.gridSize, 
 			y: Math.round( (y + ig.editor.screen.y) / this.gridSize ) * this.gridSize
 		};
 		this.menu.css({top: (y * ig.system.scale + 2), left: (x * ig.system.scale + 2) });
 		this.menu.show();
-	},
+	}
 	
 	
-	hideMenu: function( x, y ) {
+	hideMenu( x, y ) {
 		ig.editor.mode = ig.editor.MODE.DEFAULT;
 		this.menu.hide();
-	},
+	}
 	
 	
-	setActive: function( active ) {
+	setActive( active ) {
 		this.active = active;
 		if( active ) {
 			this.div.addClass( 'layerActive' );
 		} else {
 			this.div.removeClass( 'layerActive' );
 		}
-	},
+	}
 	
 	
-	toggleVisibility: function() {
+	toggleVisibility() {
 		this.visible ^= 1;
 		if( this.visible ) {
 			this.div.children('.visible').addClass('checkedVis');
@@ -550,27 +547,27 @@ wm.EditEntities = ig.Class.extend({
 			this.div.children('.visible').removeClass('checkedVis');
 		}
 		ig.game.draw();
-	},
+	}
 	
 	
-	toggleVisibilityClick: function( ev ) {
+	toggleVisibilityClick( ev ) {
 		if( !this.active ) {
 			this.ignoreLastClick = true;
 		}
 		this.toggleVisibility()
-	},
+	}
 	
 	
-	click: function() {
+	click() {
 		if( this.ignoreLastClick ) {
 			this.ignoreLastClick = false;
 			return;
 		}
 		ig.editor.setActiveLayer( 'entities' );
-	},
+	}
 	
 	
-	mousemove: function( x, y ) {
+	mousemove( x, y ) {
 		this.selector.pos = { x: x, y: y };
 		
 		if( this.selectedEntity ) {
@@ -588,7 +585,7 @@ wm.EditEntities = ig.Class.extend({
 		}
 		
 		$('body').css('cursor', 'default');
-	},
+	}
 	
 	
 	
@@ -599,16 +596,16 @@ wm.EditEntities = ig.Class.extend({
 	// Drawing
 	
 	
-	draw: function() {
+	draw() {
 		if( this.visible ) {
 			for( var i = 0; i < this.entities.length; i++ ) {
 				this.drawEntity( this.entities[i] );
 			}
 		}
-	},
+	}
 	
 	
-	drawEntity: function( ent ) {
+	drawEntity( ent ) {
 		
 		// entity itself
 		ent.draw();
@@ -654,10 +651,10 @@ wm.EditEntities = ig.Class.extend({
 				this.drawLineToTarget( ent, ent.target[t] );
 			}
 		}
-	},
+	}
 
 	
-	drawLineToTarget: function( ent, target ) {
+	drawLineToTarget( ent, target ) {
 		target = ig.game.getEntityByName( target );
 		if( !target ) {
 			return;
@@ -677,10 +674,10 @@ wm.EditEntities = ig.Class.extend({
 		);
 		ig.system.context.stroke();
 		ig.system.context.closePath();
-	},
+	}
 	
 	
-	drawCursor: function( x, y ) {
+	drawCursor( x, y ) {
 		if( this.selectedEntity ) {
 			ig.system.context.lineWidth = 1;
 			ig.system.context.strokeStyle = wm.config.colors.highlight;
@@ -692,6 +689,6 @@ wm.EditEntities = ig.Class.extend({
 			);
 		}
 	}
-});
+}
 
-});
+export default EditEntities

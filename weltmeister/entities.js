@@ -1,16 +1,11 @@
-ig.module(
-	'weltmeister.entityLoader'
-)
-.requires(
-	'weltmeister.config'
-)
-.defines(function(){ "use strict";
+import Config from "./config"
+import Weltmeister from "./weltmeister"
 
 // Load the list of entity files via AJAX PHP glob
-var path = wm.config.api.glob + '?',
-    globs = typeof wm.config.project.entityFiles == 'string' ? 
-        [wm.config.project.entityFiles] : 
-        wm.config.project.entityFiles;
+var path = Config.api.glob + '?',
+    globs = typeof Config.project.entityFiles == 'string' ? 
+        [Config.project.entityFiles] : 
+        Config.project.entityFiles;
     
 for (var i = 0; i < globs.length; i++) {
     path += 'glob[]=' + encodeURIComponent(globs[i]) + '&';
@@ -42,10 +37,11 @@ var req = $.ajax({
 			modules[name] = files[i];
 		}
 		
+		// TODO: cdreier
 		// Define a Module that requires all entity Modules
 		ig.module('weltmeister.entities')
 			.requires.apply(ig, moduleNames)
-			.defines(function(){ wm.entityModules = modules; });
+			.defines(function(){ Weltmeister.entityModules = modules; });
 	},
 	error: function( xhr, status, error ){
 		throw( 
@@ -53,6 +49,4 @@ var req = $.ajax({
 			xhr.responseText
 		);
 	}
-});
-
 });

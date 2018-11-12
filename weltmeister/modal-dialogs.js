@@ -1,24 +1,19 @@
-ig.module(
-	'weltmeister.modal-dialogs'
-)
-.requires(
-	'weltmeister.select-file-dropdown'
-)
-.defines(function(){ "use strict";
+import SelectFileDropdown from "./select-file-dropdown"
+import Config from "./config"
 
-wm.ModalDialog = ig.Class.extend({
-	onOk: null,
-	onCancel: null,
+class ModalDialog  {
+	onOk = null
+	onCancel = null
 
-	text: '',
-	okText: '',
-	cancelText: '',
+	text = ''
+	okText = ''
+	cancelText = ''
 	
-	background: null,
-	dialogBox: null,
-	buttonDiv: null,
+	background = null
+	dialogBox = null
+	buttonDiv = null
 	
-	init: function( text, okText, cancelText ) {
+	constructor( text, okText, cancelText ) {
 		this.text = text;
 		this.okText = okText || 'OK';
 		this.cancelText = cancelText || 'Cancel';
@@ -29,10 +24,10 @@ wm.ModalDialog = ig.Class.extend({
 		$('body').append( this.background );
 		
 		this.initDialog( text );
-	},
+	}
 	
 	
-	initDialog: function() {
+	initDialog() {
 		this.buttonDiv = $('<div/>', {'class': 'modalDialogButtons'} );
 		var okButton = $('<input/>', {'type': 'button', 'class':'button', 'value': this.okText});
 		var cancelButton = $('<input/>', {'type': 'button', 'class':'button', 'value': this.cancelText});
@@ -44,65 +39,73 @@ wm.ModalDialog = ig.Class.extend({
 		
 		this.dialogBox.html('<div class="modalDialogText">' + this.text + '</div>' );
 		this.dialogBox.append( this.buttonDiv );
-	},
+	}
 	
 	
-	clickOk: function() {
+	clickOk() {
 		if( this.onOk ) { this.onOk(this); }
 		this.close();
-	},
+	}
 	
 	
-	clickCancel: function() {
+	clickCancel() {
 		if( this.onCancel ) { this.onCancel(this); }
 		this.close();
-	},
+	}
 	
 	
-	open: function() {
+	open() {
 		this.background.fadeIn(100);
-	},
+	}
 	
 	
-	close: function() {
+	close() {
 		this.background.fadeOut(100);
 	}
-});
+}
 
 
 
-wm.ModalDialogPathSelect = wm.ModalDialog.extend({
-	pathDropdown: null,
-	pathInput: null,
-	fileType: '',
+class ModalDialogPathSelect extends ModalDialog {
+	pathDropdown = null
+	pathInput = null
+	fileType = ''
+
+	// bums = new Date().getTime()
 	
-	init: function( text, okText, type ) {
+	constructor( text, okText, type ) {
+		super( text, (okText || 'Select') );
+		// console.log("super done", this.pathInput, this.bums)
 		this.fileType = type || '';
-		this.parent( text, (okText || 'Select') );
-	},
+		this.initDialog( text );
+	}
 	
 	
-	setPath: function( path ) {
+	setPath( path ) {
 		var dir = path.replace(/\/[^\/]*$/, '');
+		// console.log("set path", this.pathInput, this.bums)
 		this.pathInput.val( path );
 		this.pathDropdown.loadDir( dir );
-	},
+	}
 	
-	
-	initDialog: function() {
-		this.parent();
+	initDialog() {
+		super.initDialog();
 		this.pathInput = $('<input/>', {'type': 'text', 'class': 'modalDialogPath'} );
+		// console.log("init dialog", this.pathInput, this.bums)
 		this.buttonDiv.before( this.pathInput );
-		this.pathDropdown = new wm.SelectFileDropdown( this.pathInput, wm.config.api.browse, this.fileType );
-	},
+		this.pathDropdown = new SelectFileDropdown( this.pathInput, Config.api.browse, this.fileType );
+	}
 	
-	
-	clickOk: function() {
+	clickOk() {
 		if( this.onOk ) { 
 			this.onOk(this, this.pathInput.val()); 
 		}
 		this.close();
 	}
-});
+}
 
-});
+export default ModalDialog
+
+export {
+	ModalDialogPathSelect
+}

@@ -1,31 +1,29 @@
-ig.module(
-	'weltmeister.edit-map'
-)
-.requires(
-	'impact.background-map',
-	'weltmeister.tile-select'
-)
-.defines(function(){ "use strict";
+import IG from "../lib/impact"
+import { ig } from "../lib/igUtils"
 
-wm.EditMap = ig.BackgroundMap.extend({
-	name: '',
-	visible: true,
-	active: true,
-	linkWithCollision: false,
+import BackgroundMap from "../lib/background-map"
+import TileSelect from "./tile-select"
+import Image from "../lib/image"
+
+class EditMap extends BackgroundMap {
+	name = ''
+	visible = true
+	active = true
+	linkWithCollision = false
 	
-	div: null,
-	brush: [[0]],
-	oldData: null,
-	hotkey: -1,
-	ignoreLastClick: false,
-	tileSelect: null,
+	div = null
+	brush = [[0]]
+	oldData = null
+	hotkey = -1
+	ignoreLastClick = false
+	tileSelect = null
 	
-	isSelecting: false,
-	selectionBegin: null,
+	isSelecting = false
+	selectionBegin = null
 	
-	init: function( name, tilesize, tileset, foreground ) {
+	constructor( name, tilesize, tileset, foreground ) {
+		super( tilesize, [[0]], tileset || '' );
 		this.name = name;
-		this.parent( tilesize, [[0]], tileset || '' );
 		this.foreground = foreground;
 		
 		this.div = $( '<div/>', {
@@ -41,11 +39,11 @@ wm.EditMap = ig.BackgroundMap.extend({
 			$('#layerEntities').after( this.div );
 		}
 		
-		this.tileSelect = new wm.TileSelect( this );
-	},
+		this.tileSelect = new TileSelect( this );
+	}
 	
 	
-	getSaveData: function() {
+	getSaveData() {
 		return {
 			name: this.name,
 			width: this.width,
@@ -60,10 +58,10 @@ wm.EditMap = ig.BackgroundMap.extend({
 			foreground: this.foreground,
 			data: this.data
 		};
-	},
+	}
 	
 	
-	resize: function( newWidth, newHeight ) {
+	resize( newWidth, newHeight ) {
 		var newData = new Array( newHeight );
 		for( var y = 0; y < newHeight; y++ ) {
 			newData[y] = new Array( newWidth );
@@ -76,13 +74,13 @@ wm.EditMap = ig.BackgroundMap.extend({
 		this.height = newHeight;
 		
 		this.resetDiv();
-	},
+	}
 	
-	beginEditing: function() {
+	beginEditing() {
 		this.oldData = ig.copy(this.data);
-	},
+	}
 	
-	getOldTile: function( x, y ) {
+	getOldTile( x, y ) {
 		var tx = Math.floor( x / this.tilesize );
 		var ty = Math.floor( y / this.tilesize );
 		if( 
@@ -94,23 +92,23 @@ wm.EditMap = ig.BackgroundMap.extend({
 		else {
 			return 0;
 		}
-	},
+	}
 	
-	setTileset: function( tileset ) {
+	setTileset( tileset ) {
 		if( this.name == 'collision' ) {
 			this.setCollisionTileset();
 		}
 		else {
 			this.parent( tileset );
 		}
-	},
+	}
 	
 	
-	setCollisionTileset: function() {
-		var path = wm.config.collisionTiles.path;
-		var scale = this.tilesize / wm.config.collisionTiles.tilesize;
-		this.tiles = new ig.AutoResizedImage( path, scale );
-	},
+	setCollisionTileset() {
+		var path = Config.collisionTiles.path;
+		var scale = this.tilesize / Config.collisionTiles.tilesize;
+		this.tiles = new AutoResizedImage( path, scale );
+	}
 	
 	
 	
@@ -119,19 +117,19 @@ wm.EditMap = ig.BackgroundMap.extend({
 	// -------------------------------------------------------------------------
 	// UI
 	
-	setHotkey: function( hotkey ) {
+	setHotkey( hotkey ) {
 		this.hotkey = hotkey;
 		this.setName( this.name );
-	},
+	}
 	
 	
-	setName: function( name ) {
+	setName( name ) {
 		this.name = name.replace(/[^0-9a-zA-Z]/g, '_');
 		this.resetDiv();
-	},
+	}
 	
 	
-	resetDiv: function() {
+	resetDiv() {
 		var visClass = this.visible ? ' checkedVis' : '';
 		this.div.html(
 			'<span class="visible'+visClass+'" title="Toggle Visibility (Shift+'+this.hotkey+')"></span>' +
@@ -140,20 +138,20 @@ wm.EditMap = ig.BackgroundMap.extend({
 		);
 		this.div.attr('title', 'Select Layer ('+this.hotkey+')' );
 		this.div.children('.visible').bind('mousedown', this.toggleVisibilityClick.bind(this) );
-	},
+	}
 	
 	
-	setActive: function( active ) {
+	setActive( active ) {
 		this.active = active;
 		if( active ) {
 			this.div.addClass( 'layerActive' );
 		} else {
 			this.div.removeClass( 'layerActive' );
 		}
-	},
+	}
 	
 	
-	toggleVisibility: function() {
+	toggleVisibility() {
 		this.visible ^= 1;
 		this.resetDiv();
 		if( this.visible ) {
@@ -162,42 +160,42 @@ wm.EditMap = ig.BackgroundMap.extend({
 			this.div.children('.visible').removeClass('checkedVis');
 		}
 		IG.instance.game.draw();
-	},
+	}
 	
 	
-	toggleVisibilityClick: function( event ) {
+	toggleVisibilityClick( event ) {
 		if( !this.active ) {
 			this.ignoreLastClick = true;
 		}
 		this.toggleVisibility()
-	},
+	}
 	
 	
-	click: function() {
+	click() {
 		if( this.ignoreLastClick ) {
 			this.ignoreLastClick = false;
 			return;
 		}
 		ig.editor.setActiveLayer( this.name );
-	},
+	}
 	
 	
-	destroy: function() {
+	destroy() {
 		this.div.remove();
-	},
+	}
 	
 	
 	
 	// -------------------------------------------------------------------------
 	// Selecting
 	
-	beginSelecting: function( x, y ) {
+	beginSelecting( x, y ) {
 		this.isSelecting = true;
 		this.selectionBegin = {x:x, y:y};
-	},
+	}
 	
 		
-	endSelecting: function( x, y ) {
+	endSelecting( x, y ) {
 		var r = this.getSelectionRect( x, y);
 		
 		var brush = [];
@@ -216,10 +214,10 @@ wm.EditMap = ig.BackgroundMap.extend({
 		this.isSelecting = false;
 		this.selectionBegin = null;
 		return brush;
-	},
+	}
 	
 	
-	getSelectionRect: function( x, y ) {
+	getSelectionRect( x, y ) {
 		var sx = this.selectionBegin ? this.selectionBegin.x : x,
 			sy = this.selectionBegin ? this.selectionBegin.y : y;
 			
@@ -235,7 +233,7 @@ wm.EditMap = ig.BackgroundMap.extend({
 			w: Math.abs( txb - txe) + 1,
 			h: Math.abs( tyb - tye) + 1
 		}
-	},	
+	}
 	
 	
 	
@@ -243,52 +241,52 @@ wm.EditMap = ig.BackgroundMap.extend({
 	// -------------------------------------------------------------------------
 	// Drawing
 	
-	draw: function() {
+	draw() {
 		// For performance reasons, repeated background maps are not drawn
 		// when zoomed out
-		if( this.visible && !(wm.config.view.zoom < 1 && this.repeat) ) {
+		if( this.visible && !(Config.view.zoom < 1 && this.repeat) ) {
 			this.drawTiled();
 		}
 		
 		// Grid
-		if( this.active && wm.config.view.grid ) {
+		if( this.active && Config.view.grid ) {
 			
-			var x = -ig.system.getDrawPos(this.scroll.x % this.tilesize) - 0.5;
-			var y = -ig.system.getDrawPos(this.scroll.y % this.tilesize) - 0.5;
-			var step = this.tilesize * ig.system.scale;
+			var x = -IG.instance.system.getDrawPos(this.scroll.x % this.tilesize) - 0.5;
+			var y = -IG.instance.system.getDrawPos(this.scroll.y % this.tilesize) - 0.5;
+			var step = this.tilesize * IG.instance.system.scale;
 			
-			ig.system.context.beginPath();
-			for( x; x < ig.system.realWidth; x += step ) {
-				ig.system.context.moveTo( x, 0 );
-				ig.system.context.lineTo( x, ig.system.realHeight );
+			IG.instance.system.context.beginPath();
+			for( x; x < IG.instance.system.realWidth; x += step ) {
+				IG.instance.system.context.moveTo( x, 0 );
+				IG.instance.system.context.lineTo( x, IG.instance.system.realHeight );
 			}
-			for( y; y < ig.system.realHeight; y += step ) {
-				ig.system.context.moveTo( 0, y );
-				ig.system.context.lineTo( ig.system.realWidth, y );
+			for( y; y < IG.instance.system.realHeight; y += step ) {
+				IG.instance.system.context.moveTo( 0, y );
+				IG.instance.system.context.lineTo( IG.instance.system.realWidth, y );
 			}
-			ig.system.context.strokeStyle = wm.config.colors.secondary;
-			ig.system.context.stroke();
-			ig.system.context.closePath();
+			IG.instance.system.context.strokeStyle = Config.colors.secondary;
+			IG.instance.system.context.stroke();
+			IG.instance.system.context.closePath();
 			
 			// Not calling beginPath() again has some weird performance issues
 			// in Firefox 5. closePath has no effect. So to make it happy:
-			ig.system.context.beginPath(); 
+			IG.instance.system.context.beginPath(); 
 		}
 		
 		// Bounds
 		if( this.active ) {
-			ig.system.context.lineWidth = 1;
-			ig.system.context.strokeStyle = wm.config.colors.primary;
-			ig.system.context.strokeRect( 
-				-ig.system.getDrawPos(this.scroll.x) - 0.5, 
-				-ig.system.getDrawPos(this.scroll.y) - 0.5, 
-				this.width * this.tilesize * ig.system.scale + 1, 
-				this.height * this.tilesize * ig.system.scale + 1
+			IG.instance.system.context.lineWidth = 1;
+			IG.instance.system.context.strokeStyle = Config.colors.primary;
+			IG.instance.system.context.strokeRect( 
+				-IG.instance.system.getDrawPos(this.scroll.x) - 0.5, 
+				-IG.instance.system.getDrawPos(this.scroll.y) - 0.5, 
+				this.width * this.tilesize * IG.instance.system.scale + 1, 
+				this.height * this.tilesize * IG.instance.system.scale + 1
 			);			
 		}
-	},
+	}
 	
-	getCursorOffset: function() {
+	getCursorOffset() {
 		var w = this.brush[0].length;
 		var h = this.brush.length;
 		
@@ -297,19 +295,19 @@ wm.EditMap = ig.BackgroundMap.extend({
 			x: (w/2-0.5).toInt() * this.tilesize,
 			y: (h/2-0.5).toInt() * this.tilesize
 		}
-	},
+	}
 	
-	drawCursor: function( x, y ) {
+	drawCursor( x, y ) {
 		if( this.isSelecting ) {
 			var r = this.getSelectionRect( x, y);
 		
-			ig.system.context.lineWidth = 1;
-			ig.system.context.strokeStyle = wm.config.colors.selection;
-			ig.system.context.strokeRect( 
-				(r.x * this.tilesize - this.scroll.x) * ig.system.scale - 0.5, 
-				(r.y * this.tilesize - this.scroll.y) * ig.system.scale - 0.5, 
-				r.w * this.tilesize * ig.system.scale + 1, 
-				r.h * this.tilesize * ig.system.scale + 1
+			IG.instance.system.context.lineWidth = 1;
+			IG.instance.system.context.strokeStyle = Config.colors.selection;
+			IG.instance.system.context.strokeRect( 
+				(r.x * this.tilesize - this.scroll.x) * IG.instance.system.scale - 0.5, 
+				(r.y * this.tilesize - this.scroll.y) * IG.instance.system.scale - 0.5, 
+				r.w * this.tilesize * IG.instance.system.scale + 1, 
+				r.h * this.tilesize * IG.instance.system.scale + 1
 			);
 		}
 		else {
@@ -321,16 +319,16 @@ wm.EditMap = ig.BackgroundMap.extend({
 			var cx = Math.floor( (x+this.scroll.x) / this.tilesize ) * this.tilesize - this.scroll.x - co.x;
 			var cy = Math.floor( (y+this.scroll.y) / this.tilesize ) * this.tilesize - this.scroll.y - co.y;
 			
-			ig.system.context.lineWidth = 1;
-			ig.system.context.strokeStyle = wm.config.colors.primary;
-			ig.system.context.strokeRect( 
-				ig.system.getDrawPos(cx)-0.5, 
-				ig.system.getDrawPos(cy)-0.5, 
-				w * this.tilesize * ig.system.scale + 1, 
-				h * this.tilesize * ig.system.scale + 1
+			IG.instance.system.context.lineWidth = 1;
+			IG.instance.system.context.strokeStyle = Config.colors.primary;
+			IG.instance.system.context.strokeRect( 
+				IG.instance.system.getDrawPos(cx)-0.5, 
+				IG.instance.system.getDrawPos(cy)-0.5, 
+				w * this.tilesize * IG.instance.system.scale + 1, 
+				h * this.tilesize * IG.instance.system.scale + 1
 			);
 			
-			ig.system.context.globalAlpha = 0.5;
+			IG.instance.system.context.globalAlpha = 0.5;
 			for( var ty = 0; ty < h; ty++ ) {
 				for( var tx = 0; tx < w; tx++ ) {
 					var t = this.brush[ty][tx];
@@ -341,25 +339,25 @@ wm.EditMap = ig.BackgroundMap.extend({
 					}
 				}
 			}
-			ig.system.context.globalAlpha = 1;
+			IG.instance.system.context.globalAlpha = 1;
 		}
 	}
-});
+}
 
 
-ig.AutoResizedImage = ig.Image.extend({
-	internalScale: 1,
+class AutoResizedImage extends Image {
+	internalScale = 1
 	
-	staticInstantiate: function() {
+	static staticInstantiate() {
 		return null; // Never cache!
-	},
+	}
 	
-	init: function( path, internalScale ) {
+	constructor( path, internalScale ) {
+		super( path );
 		this.internalScale = internalScale;
-		this.parent( path );
-	},
+	}
 	
-	onload: function( event ) {
+	onload( event ) {
 		this.width = Math.ceil(this.data.width * this.internalScale);
 		this.height = Math.ceil(this.data.height * this.internalScale);
 		
@@ -374,15 +372,19 @@ ig.AutoResizedImage = ig.Image.extend({
 		}
 		
 		this.loaded = true;
-		if( ig.system.scale != 1 ) {
-			this.resize( ig.system.scale );
+		if( IG.instance.system.scale != 1 ) {
+			this.resize( IG.instance.system.scale );
 		}
 		
 		if( this.loadCallback ) {
 			this.loadCallback( this.path, true );
 		}
 	}
-});
+}
 
 
-});
+export default EditMap
+
+export {
+	AutoResizedImage
+}

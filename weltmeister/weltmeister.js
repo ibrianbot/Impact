@@ -1,89 +1,95 @@
-var wm = {};	
-wm.entityFiles = [];
+import Config from "./config"
+import System from "../lib/system"
+import SoundManager from "../lib/sound"
+import ImpactImage from "../lib/image"
+import Loader from "../lib/loader"
+import Game from "../lib/game"
+import EventedInput from "./evented-input"
+import EditMap from "./edit-map"
+import EditEntities from "./edit-entities"
+import SelectFileDropdown from "./select-file-dropdown"
+import ModalDialog, {ModalDialogPathSelect} from "./modal-dialogs"
+import Undo from "./undo"
 
-ig.module(
-	'weltmeister.weltmeister'
-)
-.requires(
-	'dom.ready',
-	'impact.game',
-	'weltmeister.evented-input',
-	'weltmeister.config',
-	'weltmeister.edit-map',
-	'weltmeister.edit-entities',
-	'weltmeister.select-file-dropdown',
-	'weltmeister.modal-dialogs',
-	'weltmeister.undo'
-)
-.defines(function(){ "use strict";
 
-wm.Weltmeister = ig.Class.extend({	
-	MODE: {
+class Weltmeister {	
+	static MODE = {
 		DRAW: 1,
 		TILESELECT: 2,
 		ENTITYSELECT: 4
-	},
+	}
 
-	levelData: {},
-	layers: [],
-	entities: null,
-	activeLayer: null,
-	collisionLayer: null,
-	selectedEntity: null,
+	static entityFiles = []
+	static entityModules = []
+
+	static getMaxWidth = function() {
+		return $(window).width();
+	};
 	
-	screen: {x: 0, y: 0},
-	_rscreen: {x: 0, y: 0},
-	mouseLast: {x: -1, y: -1},
-	waitForModeChange: false,
+	static getMaxHeight = function() {
+		return $(window).height() - $('#headerMenu').height();
+	};
+
+	levelData = {}
+	layers = []
+	entities = null
+	activeLayer = null
+	collisionLayer = null
+	selectedEntity = null
 	
-	tilsetSelectDialog: null,
-	levelSavePathDialog: null,
-	labelsStep: 32,
+	screen = {x: 0, y: 0}
+	_rscreen = {x: 0, y: 0}
+	mouseLast = {x: -1, y: -1}
+	waitForModeChange = false
 	
-	collisionSolid: 1,
+	tilsetSelectDialog = null
+	levelSavePathDialog = null
+	labelsStep = 32
 	
-	loadDialog: null,
-	saveDialog: null,
-	loseChangesDialog: null,
-	fileName: 'untitled.js',
-	filePath: wm.config.project.levelPath + 'untitled.js',
-	modified: false,
-	needsDraw: true,
+	collisionSolid = 1
 	
-	undo: null,
+	loadDialog = null
+	saveDialog = null
+	loseChangesDialog = null
+	fileName = 'untitled.js'
+	filePath = Config.project.levelPath + 'untitled.js'
+	modified = false
+	needsDraw = true
 	
-	init: function() {
+	undo = null
+	
+	constructor() {
+
 		ig.game = ig.editor = this;
 		
 		ig.system.context.textBaseline = 'top';
-		ig.system.context.font = wm.config.labels.font;
-		this.labelsStep = wm.config.labels.step;
-		
+		ig.system.context.font = Config.labels.font;
+		this.labelsStep = Config.labels.step;
 			
 		
 		// Dialogs
-		this.loadDialog = new wm.ModalDialogPathSelect( 'Load Level', 'Load', 'scripts' );
+		this.loadDialog = new ModalDialogPathSelect( 'Load Level', 'Load', 'scripts' );
 		this.loadDialog.onOk = this.load.bind(this);
-		this.loadDialog.setPath( wm.config.project.levelPath );
+		this.loadDialog.setPath( Config.project.levelPath );
 		$('#levelLoad').bind( 'click', this.showLoadDialog.bind(this) );
 		$('#levelNew').bind( 'click', this.showNewDialog.bind(this) );
 		
-		this.saveDialog = new wm.ModalDialogPathSelect( 'Save Level', 'Save', 'scripts' );
+		this.saveDialog = new ModalDialogPathSelect( 'Save Level', 'Save', 'scripts' );
 		this.saveDialog.onOk = this.save.bind(this);
-		this.saveDialog.setPath( wm.config.project.levelPath );
+		this.saveDialog.setPath( Config.project.levelPath );
 		$('#levelSaveAs').bind( 'click', this.saveDialog.open.bind(this.saveDialog) );
 		$('#levelSave').bind( 'click', this.saveQuick.bind(this) );
 		
-		this.loseChangesDialog = new wm.ModalDialog( 'Lose all changes?' );
+		this.loseChangesDialog = new ModalDialog( 'Lose all changes?' );
 		
-		this.deleteLayerDialog = new wm.ModalDialog( 'Delete Layer? NO UNDO!' );
+		this.deleteLayerDialog = new ModalDialog( 'Delete Layer? NO UNDO!' );
 		this.deleteLayerDialog.onOk = this.removeLayer.bind(this);
 		
-		this.mode = this.MODE.DEFAULT;
+		this.mode = Weltmeister.MODE.DEFAULT;
 		
 		
-		this.tilesetSelectDialog = new wm.SelectFileDropdown( '#layerTileset', wm.config.api.browse, 'images' );
-		this.entities = new wm.EditEntities( $('#layerEntities') );
+		this.tilesetSelectDialog = new SelectFileDropdown( '#layerTileset', Config.api.browse, 'images' );
+		this.entities = new EditEntities( $('#layerEntities') );
 		
 		$('#layers').sortable({
 			update: this.reorderLayers.bind(this)
@@ -93,17 +99,17 @@ wm.Weltmeister = ig.Class.extend({
 		
 		
 		// Events/Input
-		if( wm.config.touchScroll ) {
+		if( Config.touchScroll ) {
 			// Setup mousewheel event
 			ig.system.canvas.addEventListener('mousewheel', this.touchScroll.bind(this), false );
 
 			// Unset MWHEEL_* binds
-			delete wm.config.binds['MWHEEL_UP'];
-			delete wm.config.binds['MWHEEL_DOWN'];
+			delete Config.binds['MWHEEL_UP'];
+			delete Config.binds['MWHEEL_DOWN'];
 		}
 
-		for( var key in wm.config.binds ) {
-			ig.input.bind( ig.KEY[key], wm.config.binds[key] );
+		for( var key in Config.binds ) {
+			ig.input.bind( EventedInput.KEY[key], Config.binds[key] );
 		}
 		ig.input.keydownCallback = this.keydown.bind(this);
 		ig.input.keyupCallback = this.keyup.bind(this);
@@ -116,7 +122,7 @@ wm.Weltmeister = ig.Class.extend({
 		$('#buttonAddLayer').bind( 'click', this.addLayer.bind(this) );
 		$('#buttonRemoveLayer').bind( 'click', this.deleteLayerDialog.open.bind(this.deleteLayerDialog) );
 		$('#buttonSaveLayerSettings').bind( 'click', this.saveLayerSettings.bind(this) );
-		$('#reloadImages').bind( 'click', ig.Image.reloadCache );
+		$('#reloadImages').bind( 'click', Image.reloadCache );
 		$('#layerIsCollision').bind( 'change', this.toggleCollisionLayer.bind(this) );
 		
 		$('input#toggleSidebar').click(function() {
@@ -130,20 +136,20 @@ wm.Weltmeister = ig.Class.extend({
 		});
 		
 		
-		this.undo = new wm.Undo( wm.config.undoLevels );
+		this.undo = new Undo( Config.undoLevels );
 		
 		
-		if( wm.config.loadLastLevel ) {
+		if( Config.loadLastLevel ) {
 			var path = $.cookie('wmLastLevel');
 			if( path ) {
 				this.load( null, path )
 			}
 		}
 		
-		ig.setAnimation( this.drawIfNeeded.bind(this) );
-	},	
+		ig.setAnimation( this.drawIfNeeded.bind(this) ); // cdreier
+	}
 	
-	uikeydown: function( event ) {
+	uikeydown( event ) {
 		if( event.target.type == 'text' ) {
 			return;
 		}
@@ -165,68 +171,68 @@ wm.Weltmeister = ig.Class.extend({
 				}
 			}
 		}
-	},
+	}
 	
 	
-	showLoadDialog: function() {
+	showLoadDialog() {
 		if( this.modified ) {
 			this.loseChangesDialog.onOk = this.loadDialog.open.bind(this.loadDialog);
 			this.loseChangesDialog.open();
 		} else {
 			this.loadDialog.open();
 		}
-	},
+	}
 	
-	showNewDialog: function() {
+	showNewDialog() {
 		if( this.modified ) {
 			this.loseChangesDialog.onOk = this.loadNew.bind(this);
 			this.loseChangesDialog.open();
 		} else {
 			this.loadNew();
 		}
-	},
+	}
 	
-	setModified: function() {
+	setModified() {
 		if( !this.modified ) {
 			this.modified = true;
 			this.setWindowTitle();
 		}
-	},
+	}
 	
-	resetModified: function() {
+	resetModified() {
 		this.modified = false;
 		this.setWindowTitle();
-	},
+	}
 	
-	setWindowTitle: function() {
+	setWindowTitle() {
 		document.title = this.fileName + (this.modified ? ' * ' : ' - ') + 'Weltmeister';
 		$('span.headerTitle').text(this.fileName);
 		$('span.unsavedTitle').text(this.modified ? '*' : '');
-	},
+	}
 	
 	
-	confirmClose: function( event ) {
+	confirmClose( event ) {
 		var rv = undefined;
-		if( this.modified && wm.config.askBeforeClose ) {
+		if( this.modified && Config.askBeforeClose ) {
 			rv = 'There are some unsaved changes. Leave anyway?';
 		}
 		event.returnValue = rv;
 		return rv;
-	},
+	}
 	
 	
-	resize: function() {
+	resize() {
 		ig.system.resize(
-			Math.floor(wm.Weltmeister.getMaxWidth() / wm.config.view.zoom), 
-			Math.floor(wm.Weltmeister.getMaxHeight() / wm.config.view.zoom), 
-			wm.config.view.zoom
+			Math.floor(Weltmeister.getMaxWidth() / Config.view.zoom), 
+			Math.floor(Weltmeister.getMaxHeight() / Config.view.zoom), 
+			Config.view.zoom
 		);
 		ig.system.context.textBaseline = 'top';
-		ig.system.context.font = wm.config.labels.font;
+		ig.system.context.font = Config.labels.font;
 		this.draw();
-	},
+	}
 	
-	scroll: function(x, y) {
+	scroll(x, y) {
 		this.screen.x -= x;
 		this.screen.y -= y;
 
@@ -235,24 +241,24 @@ wm.Weltmeister = ig.Class.extend({
 		for( var i = 0; i < this.layers.length; i++ ) {
 			this.layers[i].setScreenPos( this.screen.x, this.screen.y );
 		}
-	},
+	}
 	
-	drag: function() {
+	drag() {
 		var dx = ig.input.mouse.x - this.mouseLast.x,
 			dy = ig.input.mouse.y - this.mouseLast.y;
 		this.scroll(dx, dy);
-	},
+	}
 
-	touchScroll: function( event ) {
+	touchScroll( event ) {
 		event.preventDefault();
 
 		this.scroll( event.wheelDeltaX/ig.system.scale, event.wheelDeltaY/ig.system.scale );
 		this.draw();
 		return false;
-	},
+	}
 
-	zoom: function( delta ) {
-		var z = wm.config.view.zoom;
+	zoom( delta ) {
+		var z = Config.view.zoom;
 		var mx = ig.input.mouse.x * z,
 			my = ig.input.mouse.y * z;
 		
@@ -268,27 +274,27 @@ wm.Weltmeister = ig.Class.extend({
 			z += delta;
 		}
 		
-		wm.config.view.zoom = z.limit( wm.config.view.zoomMin, wm.config.view.zoomMax );
-		wm.config.labels.step = Math.round( this.labelsStep / wm.config.view.zoom );
-		$('#zoomIndicator').text( wm.config.view.zoom + 'x' ).stop(true,true).show().delay(300).fadeOut();
+		Config.view.zoom = z.limit( Config.view.zoomMin, Config.view.zoomMax );
+		Config.labels.step = Math.round( this.labelsStep / Config.view.zoom );
+		$('#zoomIndicator').text( Config.view.zoom + 'x' ).stop(true,true).show().delay(300).fadeOut();
 		
 		// Adjust mouse pos and screen coordinates
-		ig.input.mouse.x = mx / wm.config.view.zoom;
-		ig.input.mouse.y = my / wm.config.view.zoom;
+		ig.input.mouse.x = mx / Config.view.zoom;
+		ig.input.mouse.y = my / Config.view.zoom;
 		this.drag();
 		
-		for( var i in ig.Image.cache ) {
-			ig.Image.cache[i].resize( wm.config.view.zoom );
+		for( var i in Image.cache ) {
+			Image.cache[i].resize( Config.view.zoom );
 		}
 		
 		this.resize();
-	},
+	}
 	
 	
 	// -------------------------------------------------------------------------
 	// Loading
 	
-	loadNew: function() {
+	loadNew() {
 		$.cookie( 'wmLastLevel', null );
 		while( this.layers.length ) {
 			this.layers[0].destroy();
@@ -297,15 +303,15 @@ wm.Weltmeister = ig.Class.extend({
 		this.screen = {x: 0, y: 0};
 		this.entities.clear();
 		this.fileName = 'untitled.js';
-		this.filePath = wm.config.project.levelPath + 'untitled.js';
+		this.filePath = Config.project.levelPath + 'untitled.js';
 		this.levelData = {};
 		this.saveDialog.setPath( this.filePath );
 		this.resetModified();
 		this.draw();
-	},
+	}
 	
 	
-	load: function( dialog, path ) {
+	load( dialog, path ) {
 		this.filePath = path;
 		this.saveDialog.setPath( path );
 		this.fileName = path.replace(/^.*\//,'');
@@ -315,12 +321,12 @@ wm.Weltmeister = ig.Class.extend({
 			dataType: 'text',
 			async:false,
 			success: this.loadResponse.bind(this),
-			error: function() { $.cookie( 'wmLastLevel', null ); }
+			error() { $.cookie( 'wmLastLevel', null ); }
 		});
-	},
+	}
 	
 	
-	loadResponse: function( data ) {
+	loadResponse( data ) {
 		$.cookie( 'wmLastLevel', this.filePath );
 		
 		// extract JSON from a module's JS
@@ -342,7 +348,7 @@ wm.Weltmeister = ig.Class.extend({
 		
 		for( var i=0; i < data.layer.length; i++ ) {
 			var ld = data.layer[i];
-			var newLayer = new wm.EditMap( ld.name, ld.tilesize, ld.tilesetName, !!ld.foreground );
+			var newLayer = new EditMap( ld.name, ld.tilesize, ld.tilesetName, !!ld.foreground );
 			newLayer.resize( ld.width, ld.height );
 			newLayer.linkWithCollision = ld.linkWithCollision;
 			newLayer.repeat = ld.repeat;
@@ -368,23 +374,23 @@ wm.Weltmeister = ig.Class.extend({
 		this.resetModified();
 		this.undo.clear();
 		this.draw();
-	},
+	}
 	
 	
 	
 	// -------------------------------------------------------------------------
 	// Saving
 	
-	saveQuick: function() {
+	saveQuick() {
 		if( this.fileName == 'untitled.js' ) {
 			this.saveDialog.open();
 		}
 		else {
 			this.save( null, this.filePath );
 		}
-	},
+	}
 	
-	save: function( dialog, path ) {
+	save( dialog, path ) {
 		if( !path.match(/\.js$/) ) {
 			path += '.js';
 		}
@@ -406,14 +412,14 @@ wm.Weltmeister = ig.Class.extend({
 		
 		
 		var dataString = JSON.stringify(data);
-		if( wm.config.project.prettyPrint ) {
+		if( Config.project.prettyPrint ) {
 			dataString = JSONFormat( dataString );
 		}
 		
 		// Make it an ig.module instead of plain JSON?
-		if( wm.config.project.outputFormat == 'module' ) {
+		if( Config.project.outputFormat == 'module' ) {
 			var levelModule = path
-				.replace(wm.config.project.modulePath, '')
+				.replace(Config.project.modulePath, '')
 				.replace(/\.js$/, '')
 				.replace(/\//g, '.');
 				
@@ -458,33 +464,33 @@ wm.Weltmeister = ig.Class.extend({
 			'&data=' + encodeURIComponent(dataString);
 		
 		var req = $.ajax({
-			url: wm.config.api.save,
+			url: Config.api.save,
 			type: 'POST',
 			dataType: 'json',
 			async: false,
 			data: postString,
 			success:this.saveResponse.bind(this)
 		});
-	},
+	}
 	
-	saveResponse: function( data ) {
+	saveResponse( data ) {
 		if( data.error ) {
 			alert( 'Error: ' + data.msg );
 		} else {
 			this.resetModified();
 			$.cookie( 'wmLastLevel', this.filePath );
 		}
-	},
+	}
 	
 	
 	
 	// -------------------------------------------------------------------------
 	// Layers
 	
-	addLayer: function() {
+	addLayer() {
 		var name = 'new_layer_' + this.layers.length;
-		var newLayer = new wm.EditMap( name, wm.config.layerDefaults.tilesize );
-		newLayer.resize( wm.config.layerDefaults.width, wm.config.layerDefaults.height );
+		var newLayer = new EditMap( name, Config.layerDefaults.tilesize );
+		newLayer.resize( Config.layerDefaults.width, Config.layerDefaults.height );
 		newLayer.setScreenPos( this.screen.x, this.screen.y );
 		this.layers.push( newLayer );
 		this.setActiveLayer( name );
@@ -493,10 +499,10 @@ wm.Weltmeister = ig.Class.extend({
 		this.reorderLayers();
 		
 		$('#layers').sortable('refresh');
-	},
+	}
 	
 	
-	removeLayer: function() {
+	removeLayer() {
 		var name = this.activeLayer.name;
 		if( name == 'entities' ) {
 			return false;
@@ -512,20 +518,20 @@ wm.Weltmeister = ig.Class.extend({
 			}
 		}
 		return false;
-	},
+	}
 	
 	
-	getLayerWithName: function( name ) {
+	getLayerWithName( name ) {
 		for( var i = 0; i < this.layers.length; i++ ) {
 			if( this.layers[i].name == name ) {
 				return this.layers[i];
 			}
 		}
 		return null;
-	},
+	}
 	
 	
-	reorderLayers: function( dir ) {
+	reorderLayers( dir ) {
 		var newLayers = [];
 		var isForegroundLayer = true;
 		$('#layers div.layer span.name').each((function( newIndex, span ){
@@ -551,10 +557,10 @@ wm.Weltmeister = ig.Class.extend({
 		this.layers = newLayers;
 		this.setModified();
 		this.draw();
-	},
+	}
 	
 	
-	updateLayerSettings: function( ) {
+	updateLayerSettings( ) {
 		$('#layerName').val( this.activeLayer.name );
 		$('#layerTileset').val( this.activeLayer.tilesetName );
 		$('#layerTilesize').val( this.activeLayer.tilesize );
@@ -564,10 +570,10 @@ wm.Weltmeister = ig.Class.extend({
 		$('#layerRepeat').prop( 'checked', this.activeLayer.repeat );
 		$('#layerLinkWithCollision').prop( 'checked', this.activeLayer.linkWithCollision );
 		$('#layerDistance').val( this.activeLayer.distance );
-	},
+	}
 	
 	
-	saveLayerSettings: function() {
+	saveLayerSettings() {
 		var isCollision = $('#layerIsCollision').prop('checked');
 		
 		var newName = $('#layerName').val();
@@ -611,10 +617,10 @@ wm.Weltmeister = ig.Class.extend({
 		this.activeLayer.setName( newName );
 		this.setModified();
 		this.draw();
-	},
+	}
 	
 	
-	setActiveLayer: function( name ) {
+	setActiveLayer( name ) {
 		var previousLayer = this.activeLayer;
 		this.activeLayer = ( name == 'entities' ? this.entities : this.getLayerWithName(name) );
 		if( previousLayer == this.activeLayer ) {
@@ -640,21 +646,21 @@ wm.Weltmeister = ig.Class.extend({
 				.fadeIn(100);
 		}
 		this.draw();
-	},
+	}
 	
 	
-	toggleCollisionLayer: function( ev ) {
+	toggleCollisionLayer( ev ) {
 		var isCollision = $('#layerIsCollision').prop('checked');
 		$('#layerLinkWithCollision,#layerDistance,#layerPreRender,#layerRepeat,#layerName,#layerTileset')
 			.attr('disabled', isCollision );
-	},
+	}
 	
 	
 	
 	// -------------------------------------------------------------------------
 	// Update
 	
-	mousemove: function() {
+	mousemove() {
 		if( !this.activeLayer ) {
 			return;
 		}
@@ -690,10 +696,10 @@ wm.Weltmeister = ig.Class.extend({
 		
 		this.mouseLast = {x: ig.input.mouse.x, y: ig.input.mouse.y};
 		this.draw();
-	},
+	}
 	
 	
-	keydown: function( action ) {
+	keydown( action ) {
 		if( !this.activeLayer ) {
 			return;
 		}
@@ -733,10 +739,10 @@ wm.Weltmeister = ig.Class.extend({
 		}
 		
 		this.draw();
-	},
+	}
 	
 	
-	keyup: function( action ) {
+	keyup( action ) {
 		if( !this.activeLayer ) {
 			return;
 		}
@@ -752,7 +758,7 @@ wm.Weltmeister = ig.Class.extend({
 		}
 		
 		else if( action == 'grid' ) {
-			wm.config.view.grid = !wm.config.view.grid;
+			Config.view.grid = !Config.view.grid;
 		}
 		
 		else if( action == 'menu' ) {
@@ -808,10 +814,10 @@ wm.Weltmeister = ig.Class.extend({
 		
 		this.draw();
 		this.mouseLast = {x: ig.input.mouse.x, y: ig.input.mouse.y};
-	},
+	}
 	
 	
-	setTileOnCurrentLayer: function() {
+	setTileOnCurrentLayer() {
 		if( !this.activeLayer || !this.activeLayer.scroll ) {
 			return;
 		}
@@ -850,26 +856,26 @@ wm.Weltmeister = ig.Class.extend({
 		}
 		
 		this.setModified();
-	},
+	}
 	
 	
 	// -------------------------------------------------------------------------
 	// Drawing
 	
-	draw: function() {
+	draw() {
 		// The actual drawing loop is scheduled via ig.setAnimation() already.
 		// We just set a flag to indicate that a redraw is needed.
 		this.needsDraw = true;
-	},
+	}
 	
 	
-	drawIfNeeded: function() {
+	drawIfNeeded() {
 		// Only draw if flag is set
 		if( !this.needsDraw ) { return; }
 		this.needsDraw = false;
 		
 		
-		ig.system.clear( wm.config.colors.clear );
+		ig.system.clear( Config.colors.clear );
 	
 		var entitiesDrawn = false;
 		for( var i = 0; i < this.layers.length; i++ ) {
@@ -899,14 +905,14 @@ wm.Weltmeister = ig.Class.extend({
 			}
 		}
 		
-		if( wm.config.labels.draw ) {
-			this.drawLabels( wm.config.labels.step );
+		if( Config.labels.draw ) {
+			this.drawLabels( Config.labels.step );
 		}
-	},
+	}
 	
 	
-	drawLabels: function( step ) {
-		ig.system.context.fillStyle = wm.config.colors.primary;
+	drawLabels( step ) {
+		ig.system.context.fillStyle = Config.colors.primary;
 		var xlabel = this.screen.x - this.screen.x % step - step;
 		for( var tx = Math.floor(-this.screen.x % step); tx < ig.system.width; tx += step ) {
 			xlabel += step;
@@ -918,22 +924,14 @@ wm.Weltmeister = ig.Class.extend({
 			ylabel += step;
 			ig.system.context.fillText( ylabel, 0, ty * ig.system.scale );
 		}
-	},
+	}
 	
 	
-	getEntityByName: function( name ) {
+	getEntityByName( name ) {
 		return this.entities.getEntityByName( name );
 	}
-});
+}
 
-
-wm.Weltmeister.getMaxWidth = function() {
-	return $(window).width();
-};
-
-wm.Weltmeister.getMaxHeight = function() {
-	return $(window).height() - $('#headerMenu').height();
-};
 
 
 // Custom ig.Image class for use in Weltmeister. To make the zoom function 
@@ -941,8 +939,9 @@ wm.Weltmeister.getMaxHeight = function() {
 // Keep the original image, maintain a cache of scaled versions and use the 
 // default Canvas scaling (~bicubic) instead of nearest neighbor when 
 // zooming out.
-ig.Image.inject({
-	resize: function( scale ) {
+class Image extends ImpactImage {
+
+	resize( scale ) {
 		if( !this.loaded ) { return; }
 		if( !this.scaleCache ) { this.scaleCache = {}; }
 		if( this.scaleCache['x'+scale] ) {
@@ -969,48 +968,61 @@ ig.Image.inject({
 		
 		this.scaleCache['x'+scale] = this.data;
 	}
-});
+}
 
 
 
 // Create a custom loader, to skip sound files and the run loop creation
-wm.Loader = ig.Loader.extend({
-	end: function() {
+class WMLoader extends Loader {
+
+	end() {
 		if( this.done ) { return; }
 		
 		clearInterval( this._intervalId );
 		this.done = true;
-		ig.system.clear( wm.config.colors.clear );
+		ig.system.clear( Config.colors.clear );
 		ig.game = new (this.gameClass)();
-	},
+	}
 	
-	loadResource: function( res ) {
-		if( res instanceof ig.Sound ) {
+	loadResource( res ) {
+		if( res instanceof Sound ) {
 			this._unloaded.erase( res.path );
 		}
 		else {
 			this.parent( res );
 		}
 	}
-});
 
+}
 
-// Define a dummy module to load all plugins
-ig.module('weltmeister.loader').requires.apply(ig, wm.config.plugins).defines(function(){
-	// Init!
-	ig.system = new ig.System(
-		'#canvas', 1,
-		Math.floor(wm.Weltmeister.getMaxWidth() / wm.config.view.zoom),
-		Math.floor(wm.Weltmeister.getMaxHeight() / wm.config.view.zoom),
-		wm.config.view.zoom
-	);
+export default Weltmeister
+
+// // Define a dummy module to load all plugins
+// ig.module('weltmeister.loader').requires.apply(ig, Config.plugins).defines(function(){
+// 	// Init!
 	
-	ig.input = new wm.EventedInput();
-	ig.soundManager = new ig.SoundManager();
-	ig.ready = true;
-	
-	var loader = new wm.Loader( wm.Weltmeister, ig.resources );
-	loader.load();
-});
+// }
 
-});
+
+
+
+// IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
+
+
+const wmSystem = new System(
+	'#canvas', 1,
+	Math.floor(Weltmeister.getMaxWidth() / Config.view.zoom),
+	Math.floor(Weltmeister.getMaxHeight() / Config.view.zoom),
+	Config.view.zoom
+)
+
+const ig = {
+	system: wmSystem, 
+	input: new EventedInput(wmSystem),
+	soundManager: new SoundManager(),
+	ready: true,
+	resources: [],
+}
+
+var loader = new WMLoader( ig.system, Weltmeister, ig.resources );
+loader.load();

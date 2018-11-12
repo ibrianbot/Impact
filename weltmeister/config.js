@@ -1,9 +1,6 @@
-ig.module(
-	'weltmeister.config'
-)
-.defines(function(){ "use strict";
 
-wm.config = {
+
+const config = {
 	
 	project: {
 		// The prefix path of your game's source code. You only have to change
@@ -110,7 +107,7 @@ wm.config = {
 	// The tilesize only specifies the size in the image - resizing to final
 	// size for each layer happens in Weltmeister.
 	'collisionTiles': {
-		'path': 'lib/weltmeister/collisiontiles-64.png',
+		'path': 'weltmeister/collisiontiles-64.png',
 		'tilesize': 64
 	},
 	
@@ -118,10 +115,10 @@ wm.config = {
 	// different backend (i.e. not the official PHP backend), you may have
 	// to change these.
 	'api': {
-		'save': 'lib/weltmeister/api/save.php',
-		'browse': 'lib/weltmeister/api/browse.php',
-		'glob': 'lib/weltmeister/api/glob.php'
+		'save': 'weltmeister/api/save.php',
+		'browse': 'http://localhost:8082/weltmeister/api/browse',
+		'glob': 'weltmeister/api/glob.php'
 	}
-};
+}
 
-});
+export default config

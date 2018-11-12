@@ -1,21 +1,18 @@
-ig.module(
-	'weltmeister.tile-select'
-)
-.defines(function(){ "use strict";
+import IG from "../lib/impact"
 
-wm.TileSelect = ig.Class.extend({
+class TileSelect {
 	
-	pos: {x:0, y:0},
+	pos = {x:0, y:0}
 	
-	layer: null,
-	selectionBegin: null,
+	layer = null
+	selectionBegin = null
 	
-	init: function( layer ) {
+	constructor( layer ) {
 		this.layer = layer;
-	},
+	}
 	
 	
-	getCurrentTile: function() {
+	getCurrentTile() {
 		var b = this.layer.brush;
 		if( b.length == 1 && b[0].length == 1 ) {
 			return b[0][0] - 1;
@@ -23,10 +20,10 @@ wm.TileSelect = ig.Class.extend({
 		else {
 			return -1;
 		}
-	},
+	}
 	
 	
-	setPosition: function( x, y ) {
+	setPosition( x, y ) {
 		this.selectionBegin = null;
 		var tile = this.getCurrentTile();
 		this.pos.x = 
@@ -40,15 +37,15 @@ wm.TileSelect = ig.Class.extend({
 			
 		this.pos.x = this.pos.x.limit( 0, ig.system.width - this.layer.tiles.width - (ig.system.width % this.layer.tilesize) );
 		this.pos.y = this.pos.y.limit( 0, ig.system.height - this.layer.tiles.height - (ig.system.height % this.layer.tilesize)  );
-	},
+	}
 	
 	
-	beginSelecting: function( x, y ) {
+	beginSelecting( x, y ) {
 		this.selectionBegin = {x:x, y:y};
-	},
+	}
 	
 		
-	endSelecting: function( x, y ) {
+	endSelecting( x, y ) {
 		var r = this.getSelectionRect( x, y);
 		
 		var mw = Math.floor( this.layer.tiles.width / this.layer.tilesize );
@@ -69,10 +66,10 @@ wm.TileSelect = ig.Class.extend({
 		}
 		this.selectionBegin = null;
 		return brush;
-	},
+	}
 	
 	
-	getSelectionRect: function( x, y ) {
+	getSelectionRect( x, y ) {
 		var sx = this.selectionBegin ? this.selectionBegin.x : x,
 			sy = this.selectionBegin ? this.selectionBegin.y : y;
 			
@@ -88,10 +85,10 @@ wm.TileSelect = ig.Class.extend({
 			w: Math.abs( txb - txe) + 1,
 			h: Math.abs( tyb - tye) + 1
 		}
-	},	
+	}
 	
 	
-	draw: function() {
+	draw() {
 		ig.system.clear( "rgba(0,0,0,0.8)" ); 
 		if( !this.layer.tiles.loaded ) {
 			return;
@@ -132,10 +129,10 @@ wm.TileSelect = ig.Class.extend({
 			this.layer.tilesize * ig.system.scale + 1, 
 			this.layer.tilesize * ig.system.scale + 1
 		);
-	},
+	}
 	
 	
-	drawCursor: function( x, y ) {  
+	drawCursor( x, y ) {  
 		var cx = Math.floor( x / this.layer.tilesize ) * this.layer.tilesize;
 		var cy = Math.floor( y / this.layer.tilesize ) * this.layer.tilesize;
 		
@@ -150,6 +147,8 @@ wm.TileSelect = ig.Class.extend({
 			r.h * this.layer.tilesize * ig.system.scale + 1
 		);
 	}
-});
 
-});
+}
+
+
+export default TileSelect
