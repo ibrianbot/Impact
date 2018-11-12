@@ -1,2 +1,2 @@
 
-import "./lib/impact/impact"
+import "./lib/game/main"
