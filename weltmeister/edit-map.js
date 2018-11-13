@@ -1,4 +1,5 @@
 import IG from "../lib/impact"
+import Config from "./config"
 import { ig } from "../lib/igUtils"
 
 import BackgroundMap from "../lib/background-map"
@@ -99,7 +100,7 @@ class EditMap extends BackgroundMap {
 			this.setCollisionTileset();
 		}
 		else {
-			this.parent( tileset );
+			super.setTileset( tileset );
 		}
 	}
 	

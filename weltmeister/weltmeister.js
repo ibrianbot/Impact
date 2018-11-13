@@ -633,7 +633,7 @@ class Weltmeister {
 			previousLayer.setActive( false );
 		}
 		this.activeLayer.setActive( true );
-		this.mode = this.MODE.DEFAULT;
+		this.mode = Weltmeister.MODE.DEFAULT;
 		
 		$('#layerIsCollision').prop('checked', (name == 'collision') );
 		
@@ -667,19 +667,19 @@ class Weltmeister {
 			return;
 		}
 		
-		if( this.mode == this.MODE.DEFAULT ) {
+		if( this.mode == Weltmeister.MODE.DEFAULT ) {
 			
 			// scroll map
-			if( ig.input.state('drag') ) {
+			if( IG.instance.input.state('drag') ) {
 				this.drag();
 			}
 			
-			else if( ig.input.state('draw') ) {
+			else if( IG.instance.input.state('draw') ) {
 				
 				// move/scale entity
 				if( this.activeLayer == this.entities ) {
-					var x = ig.input.mouse.x + this.screen.x;
-					var y = ig.input.mouse.y + this.screen.y;
+					var x = IG.instance.input.mouse.x + this.screen.x;
+					var y = IG.instance.input.mouse.y + this.screen.y;
 					this.entities.dragOnSelectedEntity( x, y );
 					this.setModified();
 				}
@@ -690,13 +690,13 @@ class Weltmeister {
 				}
 			}
 			else if( this.activeLayer == this.entities ) {
-				var x = ig.input.mouse.x + this.screen.x;
-				var y = ig.input.mouse.y + this.screen.y;
+				var x = IG.instance.input.mouse.x + this.screen.x;
+				var y = IG.instance.input.mouse.y + this.screen.y;
 				this.entities.mousemove( x, y );
 			}
 		}
 		
-		this.mouseLast = {x: ig.input.mouse.x, y: ig.input.mouse.y};
+		this.mouseLast = {x: IG.instance.input.mouse.x, y: IG.instance.input.mouse.y};
 		this.draw();
 	}
 	
@@ -707,19 +707,19 @@ class Weltmeister {
 		}
 		
 		if( action == 'draw' ) {
-			if( this.mode == this.MODE.DEFAULT ) {
+			if( this.mode == Weltmeister.MODE.DEFAULT ) {
 				// select entity
 				if( this.activeLayer == this.entities ) {
-					var x = ig.input.mouse.x + this.screen.x;
-					var y = ig.input.mouse.y + this.screen.y;
+					var x = IG.instance.input.mouse.x + this.screen.x;
+					var y = IG.instance.input.mouse.y + this.screen.y;
 					var entity = this.entities.selectEntityAt( x, y );
 					if( entity ) {
 						this.undo.beginEntityEdit( entity );
 					}
 				}
 				else {
-					if( ig.input.state('select') ) {
-						this.activeLayer.beginSelecting( ig.input.mouse.x, ig.input.mouse.y );
+					if( IG.instance.input.state('select') ) {
+						this.activeLayer.beginSelecting( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 					}
 					else {
 						this.undo.beginMapDraw();
@@ -735,8 +735,8 @@ class Weltmeister {
 					}
 				}
 			}
-			else if( this.mode == this.MODE.TILESELECT && ig.input.state('select') ) {	
-				this.activeLayer.tileSelect.beginSelecting( ig.input.mouse.x, ig.input.mouse.y );
+			else if( this.mode == Weltmeister.MODE.TILESELECT && IG.instance.input.state('select') ) {	
+				this.activeLayer.tileSelect.beginSelecting( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 			}
 		}
 		
@@ -764,17 +764,17 @@ class Weltmeister {
 		}
 		
 		else if( action == 'menu' ) {
-			if( this.mode != this.MODE.TILESELECT && this.mode != this.MODE.ENTITYSELECT ) {
+			if( this.mode != Weltmeister.MODE.TILESELECT && this.mode != Weltmeister.MODE.ENTITYSELECT ) {
 				if( this.activeLayer == this.entities ) {
-					this.mode = this.MODE.ENTITYSELECT;
-					this.entities.showMenu( ig.input.mouse.x, ig.input.mouse.y );
+					this.mode = Weltmeister.MODE.ENTITYSELECT;
+					this.entities.showMenu( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 				}
 				else {
-					this.mode = this.MODE.TILESELECT;
-					this.activeLayer.tileSelect.setPosition( ig.input.mouse.x, ig.input.mouse.y	);
+					this.mode = Weltmeister.MODE.TILESELECT;
+					this.activeLayer.tileSelect.setPosition( IG.instance.input.mouse.x, IG.instance.input.mouse.y	);
 				}
 			} else {
-				this.mode = this.MODE.DEFAULT;
+				this.mode = Weltmeister.MODE.DEFAULT;
 				this.entities.hideMenu();
 			}
 		}
@@ -789,16 +789,16 @@ class Weltmeister {
 		
 		if( action == 'draw' ) {			
 			// select tile
-			if( this.mode == this.MODE.TILESELECT ) {
-				this.activeLayer.brush = this.activeLayer.tileSelect.endSelecting( ig.input.mouse.x, ig.input.mouse.y );
-				this.mode = this.MODE.DEFAULT;
+			if( this.mode == Weltmeister.MODE.TILESELECT ) {
+				this.activeLayer.brush = this.activeLayer.tileSelect.endSelecting( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
+				this.mode = Weltmeister.MODE.DEFAULT;
 			}
 			else if( this.activeLayer == this.entities ) {
 				this.undo.endEntityEdit();
 			}
 			else {
 				if( this.activeLayer.isSelecting ) {
-					this.activeLayer.brush = this.activeLayer.endSelecting( ig.input.mouse.x, ig.input.mouse.y );
+					this.activeLayer.brush = this.activeLayer.endSelecting( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 				}
 				else {
 					this.undo.endMapDraw();
@@ -815,7 +815,7 @@ class Weltmeister {
 		}
 		
 		this.draw();
-		this.mouseLast = {x: ig.input.mouse.x, y: ig.input.mouse.y};
+		this.mouseLast = {x: IG.instance.input.mouse.x, y: IG.instance.input.mouse.y};
 	}
 	
 	
@@ -825,8 +825,8 @@ class Weltmeister {
 		}
 		
 		var co = this.activeLayer.getCursorOffset();
-		var x = ig.input.mouse.x + this.activeLayer.scroll.x - co.x;
-		var y = ig.input.mouse.y + this.activeLayer.scroll.y - co.y;
+		var x = IG.instance.input.mouse.x + this.activeLayer.scroll.x - co.x;
+		var y = IG.instance.input.mouse.y + this.activeLayer.scroll.y - co.y;
 		
 		var brush = this.activeLayer.brush;
 		for( var by = 0; by < brush.length; by++ ) {
@@ -897,13 +897,13 @@ class Weltmeister {
 		
 		
 		if( this.activeLayer ) {
-			if( this.mode == this.MODE.TILESELECT ) {
+			if( this.mode == Weltmeister.MODE.TILESELECT ) {
 				this.activeLayer.tileSelect.draw();
-				this.activeLayer.tileSelect.drawCursor( ig.input.mouse.x, ig.input.mouse.y );
+				this.activeLayer.tileSelect.drawCursor( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 			}
 			
-			if( this.mode == this.MODE.DEFAULT ) {
-				this.activeLayer.drawCursor( ig.input.mouse.x, ig.input.mouse.y );
+			if( this.mode == Weltmeister.MODE.DEFAULT ) {
+				this.activeLayer.drawCursor( IG.instance.input.mouse.x, IG.instance.input.mouse.y );
 			}
 		}
 		
