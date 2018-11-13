@@ -51,8 +51,8 @@ func save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	json.NewEncoder(w).Encode(SaveResponse{
-		Error: "0",
-	})
+	success := make(map[string]bool)
+	success["error"] = false
+	json.NewEncoder(w).Encode(success)
 
 }
