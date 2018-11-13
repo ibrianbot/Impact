@@ -1,4 +1,5 @@
 import Config from "./config"
+import IG, {IGConfig} from "../lib/impact"
 import System from "../lib/system"
 import SoundManager from "../lib/sound"
 import ImpactImage from "../lib/image"
@@ -60,10 +61,10 @@ class Weltmeister {
 	
 	constructor() {
 
-		ig.game = ig.editor = this;
+		IG.instance.game = IG.instance.editor = this;
 		
-		ig.system.context.textBaseline = 'top';
-		ig.system.context.font = Config.labels.font;
+		IG.instance.system.context.textBaseline = 'top';
+		IG.instance.system.context.font = Config.labels.font;
 		this.labelsStep = Config.labels.step;
 			
 		
@@ -101,7 +102,7 @@ class Weltmeister {
 		// Events/Input
 		if( Config.touchScroll ) {
 			// Setup mousewheel event
-			ig.system.canvas.addEventListener('mousewheel', this.touchScroll.bind(this), false );
+			IG.instance.system.canvas.addEventListener('mousewheel', this.touchScroll.bind(this), false );
 
 			// Unset MWHEEL_* binds
 			delete Config.binds['MWHEEL_UP'];
@@ -109,11 +110,11 @@ class Weltmeister {
 		}
 
 		for( var key in Config.binds ) {
-			ig.input.bind( EventedInput.KEY[key], Config.binds[key] );
+			IG.instance.input.bind( EventedInput.KEY[key], Config.binds[key] );
 		}
-		ig.input.keydownCallback = this.keydown.bind(this);
-		ig.input.keyupCallback = this.keyup.bind(this);
-		ig.input.mousemoveCallback = this.mousemove.bind(this);
+		IG.instance.input.keydownCallback = this.keydown.bind(this);
+		IG.instance.input.keyupCallback = this.keyup.bind(this);
+		IG.instance.input.mousemoveCallback = this.mousemove.bind(this);
 		
 		$(window).resize( this.resize.bind(this) );
 		$(window).bind( 'keydown', this.uikeydown.bind(this) );
@@ -146,7 +147,7 @@ class Weltmeister {
 			}
 		}
 		
-		ig.setAnimation( this.drawIfNeeded.bind(this) ); // cdreier
+		IG.instance.setAnimation( this.drawIfNeeded.bind(this) ); // cdreier
 	}
 	
 	uikeydown( event ) {
@@ -222,13 +223,13 @@ class Weltmeister {
 	
 	
 	resize() {
-		ig.system.resize(
+		IG.instance.system.resize(
 			Math.floor(Weltmeister.getMaxWidth() / Config.view.zoom), 
 			Math.floor(Weltmeister.getMaxHeight() / Config.view.zoom), 
 			Config.view.zoom
 		);
-		ig.system.context.textBaseline = 'top';
-		ig.system.context.font = Config.labels.font;
+		IG.instance.system.context.textBaseline = 'top';
+		IG.instance.system.context.font = Config.labels.font;
 		this.draw();
 	}
 	
@@ -236,31 +237,31 @@ class Weltmeister {
 		this.screen.x -= x;
 		this.screen.y -= y;
 
-		this._rscreen.x = Math.round(this.screen.x * ig.system.scale)/ig.system.scale;
-		this._rscreen.y = Math.round(this.screen.y * ig.system.scale)/ig.system.scale;
+		this._rscreen.x = Math.round(this.screen.x * IG.instancesystem.scale)/IG.instance.system.scale;
+		this._rscreen.y = Math.round(this.screen.y * IG.instancesystem.scale)/IG.instance.system.scale;
 		for( var i = 0; i < this.layers.length; i++ ) {
 			this.layers[i].setScreenPos( this.screen.x, this.screen.y );
 		}
 	}
 	
 	drag() {
-		var dx = ig.input.mouse.x - this.mouseLast.x,
-			dy = ig.input.mouse.y - this.mouseLast.y;
+		var dx = IG.instance.input.mouse.x - this.mouseLast.x,
+			dy = IG.instance.input.mouse.y - this.mouseLast.y;
 		this.scroll(dx, dy);
 	}
 
 	touchScroll( event ) {
 		event.preventDefault();
 
-		this.scroll( event.wheelDeltaX/ig.system.scale, event.wheelDeltaY/ig.system.scale );
+		this.scroll( event.wheelDeltaX/IG.instance.system.scale, event.wheelDeltaY/IG.instance.system.scale );
 		this.draw();
 		return false;
 	}
 
 	zoom( delta ) {
 		var z = Config.view.zoom;
-		var mx = ig.input.mouse.x * z,
-			my = ig.input.mouse.y * z;
+		var mx = IG.instance.input.mouse.x * z,
+			my = IG.instance.input.mouse.y * z;
 		
 		if( z <= 1 ) {
 			if( delta < 0 ) {
@@ -279,8 +280,8 @@ class Weltmeister {
 		$('#zoomIndicator').text( Config.view.zoom + 'x' ).stop(true,true).show().delay(300).fadeOut();
 		
 		// Adjust mouse pos and screen coordinates
-		ig.input.mouse.x = mx / Config.view.zoom;
-		ig.input.mouse.y = my / Config.view.zoom;
+		IG.instance.input.mouse.x = mx / Config.view.zoom;
+		IG.instance.input.mouse.y = my / Config.view.zoom;
 		this.drag();
 		
 		for( var i in Image.cache ) {
@@ -430,11 +431,12 @@ class Weltmeister {
 			
 			var resourcesString = '';
 			if( resources.length ) {
-				resourcesString = "Level" + levelName + "Resources=[new ig.Image('" +
-					resources.join("'), new ig.Image('") +
+				resourcesString = "Level" + levelName + "Resources=[new Image('" +
+					resources.join("'), new Image('") +
 				"')];\n";
 			}
 			
+			// TODO cdreier
 			// Collect all Entity Modules
 			var requires = ['impact.image'];
 			var requiresHash = {};
@@ -875,7 +877,7 @@ class Weltmeister {
 		this.needsDraw = false;
 		
 		
-		ig.system.clear( Config.colors.clear );
+		IG.instance.system.clear( Config.colors.clear );
 	
 		var entitiesDrawn = false;
 		for( var i = 0; i < this.layers.length; i++ ) {
@@ -912,17 +914,17 @@ class Weltmeister {
 	
 	
 	drawLabels( step ) {
-		ig.system.context.fillStyle = Config.colors.primary;
+		IG.instance.system.context.fillStyle = Config.colors.primary;
 		var xlabel = this.screen.x - this.screen.x % step - step;
-		for( var tx = Math.floor(-this.screen.x % step); tx < ig.system.width; tx += step ) {
+		for( var tx = Math.floor(-this.screen.x % step); tx < IG.instance.system.width; tx += step ) {
 			xlabel += step;
-			ig.system.context.fillText( xlabel, tx * ig.system.scale, 0 );
+			IG.instance.system.context.fillText( xlabel, tx * IG.instance.system.scale, 0 );
 		}
 		
 		var ylabel = this.screen.y - this.screen.y % step - step;
-		for( var ty = Math.floor(-this.screen.y % step); ty < ig.system.height; ty += step ) {
+		for( var ty = Math.floor(-this.screen.y % step); ty < IG.instance.system.height; ty += step ) {
 			ylabel += step;
-			ig.system.context.fillText( ylabel, 0, ty * ig.system.scale );
+			IG.instance.system.context.fillText( ylabel, 0, ty * IG.instance.system.scale );
 		}
 	}
 	
@@ -980,8 +982,8 @@ class WMLoader extends Loader {
 		
 		clearInterval( this._intervalId );
 		this.done = true;
-		ig.system.clear( Config.colors.clear );
-		ig.game = new (this.gameClass)();
+		IG.instance.system.clear( Config.colors.clear );
+		IG.instance.game = new (this.gameClass)();
 	}
 	
 	loadResource( res ) {
@@ -1016,13 +1018,22 @@ const wmSystem = new System(
 	Config.view.zoom
 )
 
-const ig = {
-	system: wmSystem, 
-	input: new EventedInput(wmSystem),
-	soundManager: new SoundManager(),
-	ready: true,
-	resources: [],
-}
 
-var loader = new WMLoader( ig.system, Weltmeister, ig.resources );
-loader.load();
+const igConfig = new IGConfig()
+igConfig.system = wmSystem
+igConfig.input = new EventedInput(wmSystem)
+igConfig.soundManager = new SoundManager()
+
+IG.instance = new IG(igConfig, Weltmeister, WMLoader)
+
+
+// const ig = {
+// 	system: wmSystem, 
+// 	input: ,
+// 	soundManager: ,
+// 	ready: true,
+// 	resources: [],
+// }
+
+// var loader = new WMLoader( ig.system, Weltmeister, ig.resources );
+// loader.load();

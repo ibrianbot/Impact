@@ -5,16 +5,16 @@ const config = {
 	project: {
 		// The prefix path of your game's source code. You only have to change
 		// this if you use the 'ImpactPrefix' in your dev environment.
-		'modulePath': 'lib/',
+		'modulePath': '/',
 		
 		// This "glob" tells Weltmeister where to load the entity files
 		// from. If you want to load entities from several directories,
 		// you can specify an array here. E.g.:
 		// 'entityFiles': ['lib/game/powerups/*.js', 'lib/game/entities/*.js']
-		'entityFiles': 'lib/game/entities/*.js',
+		'entityFiles': 'game/entities/*.js',
 		
 		// The default path for the level file selection box
-		'levelPath': 'lib/game/levels/',
+		'levelPath': 'game/levels/',
 		
 		// Whether to save levels as plain JSON or wrapped in a module. If
 		// you want to load levels asynchronously via AJAX, saving as plain
@@ -115,7 +115,7 @@ const config = {
 	// different backend (i.e. not the official PHP backend), you may have
 	// to change these.
 	'api': {
-		'save': 'weltmeister/api/save.php',
+		'save': 'http://localhost:8082/weltmeister/api/save',
 		'browse': 'http://localhost:8082/weltmeister/api/browse',
 		'glob': 'weltmeister/api/glob.php'
 	}

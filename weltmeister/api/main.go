@@ -1,9 +1,7 @@
 package main
 
 import (
-	"encoding/json"
 	"log"
-	"net/http"
 
 	"github.com/cdreier/golang-snippets/snippets"
 
@@ -11,11 +9,7 @@ import (
 	"github.com/go-chi/cors"
 )
 
-type BrowseDTO struct {
-	Parent string   `json:"parent"`
-	Dirs   []string `json:"dirs"`
-	Files  []string `json:"files"`
-}
+const FILE_ROOT = "../../"
 
 func main() {
 
@@ -24,13 +18,8 @@ func main() {
 	addCors(r)
 
 	r.Route("/weltmeister/api/", func(r chi.Router) {
-		r.Get("/browse", func(w http.ResponseWriter, r *http.Request) {
-			json.NewEncoder(w).Encode(BrowseDTO{
-				Parent: "",
-				Dirs:   make([]string, 0),
-				Files:  make([]string, 0),
-			})
-		})
+		r.Get("/browse", browse)
+		r.Post("/save", save)
 	})
 
 	log.Println("starting api on port", "8082")
