@@ -56,7 +56,7 @@ class EditEntities  {
 	
 	
 	sort() {
-		this.entities.sort( ig.Game.SORT.Z_INDEX );
+		this.entities.sort( IG.instance.Game.SORT.Z_INDEX );
 	}
 	
 	
@@ -206,7 +206,7 @@ class EditEntities  {
 			return false;
 		}
 		
-		ig.game.undo.commitEntityDelete( this.selectedEntity );
+		IG.instance.game.undo.commitEntityDelete( this.selectedEntity );
 		
 		this.removeEntity( this.selectedEntity );
 		this.selectEntity( null );
@@ -238,7 +238,7 @@ class EditEntities  {
 		newEntity._wmSettings = settings;
 		this.selectEntity( newEntity );
 		
-		ig.game.undo.commitEntityCreate( newEntity );
+		IG.instance.game.undo.commitEntityCreate( newEntity );
 		
 		return true;
 	}
@@ -258,7 +258,7 @@ class EditEntities  {
 			this.moveSelectedEntity( x, y )
 		}
 		
-		ig.game.undo.pushEntityEdit( this.selectedEntity );
+		IG.instance.game.undo.pushEntityEdit( this.selectedEntity );
 		return true;
 	}
 	
@@ -327,15 +327,15 @@ class EditEntities  {
 		var newEntity = this.spawnEntity( ev.target.id, 0, 0, {} );
 		this.selectEntity( newEntity );
 		this.moveSelectedEntity( this.selector.pos.x, this.selector.pos.y );
-		ig.editor.setModified();
+		IG.instance.editor.setModified();
 		
-		ig.game.undo.commitEntityCreate( newEntity );
+		IG.instance.game.undo.commitEntityCreate( newEntity );
 	}
 	
 	
 	spawnEntity( className, x, y, settings ) {
 		settings = settings || {};
-		var entityClass = ig.global[ className ];
+		var entityClass = IG.instance.global[ className ];
 		if( entityClass ) {
 			var newEntity = new (entityClass)( x, y, settings );
 			newEntity._wmInEditor = true;
@@ -443,8 +443,8 @@ class EditEntities  {
 		
 		this.sort();
 		
-		ig.game.setModified();
-		ig.game.draw();
+		IG.instance.game.setModified();
+		IG.instance.game.draw();
 		
 		$('#entityKey').val('');
 		$('#entityValue').val('');
@@ -516,16 +516,16 @@ class EditEntities  {
 	
 	showMenu( x, y ) {
 		this.selector.pos = { 
-			x: Math.round( (x + ig.editor.screen.x) / this.gridSize ) * this.gridSize, 
-			y: Math.round( (y + ig.editor.screen.y) / this.gridSize ) * this.gridSize
+			x: Math.round( (x + IG.instance.editor.screen.x) / this.gridSize ) * this.gridSize, 
+			y: Math.round( (y + IG.instance.editor.screen.y) / this.gridSize ) * this.gridSize
 		};
-		this.menu.css({top: (y * ig.system.scale + 2), left: (x * ig.system.scale + 2) });
+		this.menu.css({top: (y * IG.instance.system.scale + 2), left: (x * IG.instance.system.scale + 2) });
 		this.menu.show();
 	}
 	
 	
 	hideMenu( x, y ) {
-		ig.editor.mode = ig.editor.MODE.DEFAULT;
+		IG.instance.editor.mode = Weltmeister.MODE.DEFAULT;
 		this.menu.hide();
 	}
 	
@@ -547,7 +547,7 @@ class EditEntities  {
 		} else {
 			this.div.children('.visible').removeClass('checkedVis');
 		}
-		ig.game.draw();
+		IG.instance.game.draw();
 	}
 	
 	
@@ -564,7 +564,7 @@ class EditEntities  {
 			this.ignoreLastClick = false;
 			return;
 		}
-		ig.editor.setActiveLayer( 'entities' );
+		IG.instance.editor.setActiveLayer( 'entities' );
 	}
 	
 	
@@ -613,35 +613,35 @@ class EditEntities  {
 		
 		// box
 		if( ent._wmDrawBox ) {
-			ig.system.context.fillStyle = ent._wmBoxColor || 'rgba(128, 128, 128, 0.9)';
-			ig.system.context.fillRect(
-				ig.system.getDrawPos(ent.pos.x - ig.game.screen.x),
-				ig.system.getDrawPos(ent.pos.y - ig.game.screen.y), 
-				ent.size.x * ig.system.scale, 
-				ent.size.y * ig.system.scale
+			IG.instance.system.context.fillStyle = ent._wmBoxColor || 'rgba(128, 128, 128, 0.9)';
+			IG.instance.system.context.fillRect(
+				IG.instance.system.getDrawPos(ent.pos.x - IG.instance.game.screen.x),
+				IG.instance.system.getDrawPos(ent.pos.y - IG.instance.game.screen.y), 
+				ent.size.x * IG.instance.system.scale, 
+				ent.size.y * IG.instance.system.scale
 			);
 		}
 		
 		
-		if( wm.config.labels.draw ) {
+		if( Config.labels.draw ) {
 			// description
 			var className = ent._wmClassName.replace(/^Entity/, '');
 			var description = className + (ent.name ? ': ' + ent.name : '' );
 			
 			// text-shadow
-			ig.system.context.fillStyle = 'rgba(0,0,0,0.4)';
-			ig.system.context.fillText(
+			IG.instance.system.context.fillStyle = 'rgba(0,0,0,0.4)';
+			IG.instance.system.context.fillText(
 				description,
-				ig.system.getDrawPos(ent.pos.x - ig.game.screen.x), 
-				ig.system.getDrawPos(ent.pos.y - ig.game.screen.y + 0.5)
+				IG.instance.system.getDrawPos(ent.pos.x - IG.instance.game.screen.x), 
+				IG.instance.system.getDrawPos(ent.pos.y - IG.instance.game.screen.y + 0.5)
 			);
 			
 			// text
-			ig.system.context.fillStyle = wm.config.colors.primary;
-			ig.system.context.fillText(
+			IG.instance.system.context.fillStyle = wm.config.colors.primary;
+			IG.instance.system.context.fillText(
 				description,
-				ig.system.getDrawPos(ent.pos.x - ig.game.screen.x), 
-				ig.system.getDrawPos(ent.pos.y - ig.game.screen.y)
+				IG.instance.system.getDrawPos(ent.pos.x - IG.instance.game.screen.x), 
+				IG.instance.system.getDrawPos(ent.pos.y - IG.instance.game.screen.y)
 			);
 		}
 
@@ -656,37 +656,37 @@ class EditEntities  {
 
 	
 	drawLineToTarget( ent, target ) {
-		target = ig.game.getEntityByName( target );
+		target = IG.instance.game.getEntityByName( target );
 		if( !target ) {
 			return;
 		}
 		
-		ig.system.context.strokeStyle = '#fff';
-		ig.system.context.lineWidth = 1;
+		IG.instance.system.context.strokeStyle = '#fff';
+		IG.instance.system.context.lineWidth = 1;
 		
-		ig.system.context.beginPath();
-		ig.system.context.moveTo(
-			ig.system.getDrawPos(ent.pos.x + ent.size.x/2 - ig.game.screen.x),
-			ig.system.getDrawPos(ent.pos.y + ent.size.y/2 - ig.game.screen.y)
+		IG.instance.system.context.beginPath();
+		IG.instance.system.context.moveTo(
+			IG.instance.system.getDrawPos(ent.pos.x + ent.size.x/2 - IG.instance.game.screen.x),
+			IG.instance.system.getDrawPos(ent.pos.y + ent.size.y/2 - IG.instance.game.screen.y)
 		);
-		ig.system.context.lineTo(
-			ig.system.getDrawPos(target.pos.x + target.size.x/2 - ig.game.screen.x),
-			ig.system.getDrawPos(target.pos.y + target.size.y/2 - ig.game.screen.y)
+		IG.instance.system.context.lineTo(
+			IG.instance.system.getDrawPos(target.pos.x + target.size.x/2 - IG.instance.game.screen.x),
+			IG.instance.system.getDrawPos(target.pos.y + target.size.y/2 - IG.instance.game.screen.y)
 		);
-		ig.system.context.stroke();
-		ig.system.context.closePath();
+		IG.instance.system.context.stroke();
+		IG.instance.system.context.closePath();
 	}
 	
 	
 	drawCursor( x, y ) {
 		if( this.selectedEntity ) {
-			ig.system.context.lineWidth = 1;
-			ig.system.context.strokeStyle = wm.config.colors.highlight;
-			ig.system.context.strokeRect( 
-				ig.system.getDrawPos(this.selectedEntity.pos.x - ig.editor.screen.x) - 0.5, 
-				ig.system.getDrawPos(this.selectedEntity.pos.y - ig.editor.screen.y) - 0.5, 
-				this.selectedEntity.size.x * ig.system.scale + 1, 
-				this.selectedEntity.size.y * ig.system.scale + 1
+			IG.instance.system.context.lineWidth = 1;
+			IG.instance.system.context.strokeStyle = wm.config.colors.highlight;
+			IG.instance.system.context.strokeRect( 
+				IG.instance.system.getDrawPos(this.selectedEntity.pos.x - IG.instance.editor.screen.x) - 0.5, 
+				IG.instance.system.getDrawPos(this.selectedEntity.pos.y - IG.instance.editor.screen.y) - 0.5, 
+				IG.instance.selectedEntity.size.x * IG.instance.system.scale + 1, 
+				IG.instance.selectedEntity.size.y * IG.instance.system.scale + 1
 			);
 		}
 	}

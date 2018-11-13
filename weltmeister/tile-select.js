@@ -1,4 +1,5 @@
 import IG from "../lib/impact"
+import Config from "./config"
 
 class TileSelect {
 	
@@ -35,8 +36,8 @@ class TileSelect {
 			- Math.floor( tile * this.layer.tilesize / this.layer.tiles.width ) * this.layer.tilesize
 			- (tile == -1 ? this.layer.tilesize : 0);
 			
-		this.pos.x = this.pos.x.limit( 0, ig.system.width - this.layer.tiles.width - (ig.system.width % this.layer.tilesize) );
-		this.pos.y = this.pos.y.limit( 0, ig.system.height - this.layer.tiles.height - (ig.system.height % this.layer.tilesize)  );
+		this.pos.x = this.pos.x.limit( 0, IG.instance.system.width - this.layer.tiles.width - (IG.instance.system.width % this.layer.tilesize) );
+		this.pos.y = this.pos.y.limit( 0, IG.instance.system.height - this.layer.tiles.height - (IG.instance.system.height % this.layer.tilesize)  );
 	}
 	
 	
@@ -89,26 +90,26 @@ class TileSelect {
 	
 	
 	draw() {
-		ig.system.clear( "rgba(0,0,0,0.8)" ); 
+		IG.instance.system.clear( "rgba(0,0,0,0.8)" ); 
 		if( !this.layer.tiles.loaded ) {
 			return;
 		}
 		
 		// Tileset
-		ig.system.context.lineWidth = 1;
-		ig.system.context.strokeStyle = wm.config.colors.secondary;
-		ig.system.context.fillStyle = wm.config.colors.clear;
-		ig.system.context.fillRect( 
-			this.pos.x * ig.system.scale, 
-			this.pos.y * ig.system.scale, 
-			this.layer.tiles.width * ig.system.scale, 
-			this.layer.tiles.height * ig.system.scale
+		IG.instance.system.context.lineWidth = 1;
+		IG.instance.system.context.strokeStyle = Config.colors.secondary;
+		IG.instance.system.context.fillStyle = Config.colors.clear;
+		IG.instance.system.context.fillRect( 
+			this.pos.x * IG.instance.system.scale, 
+			this.pos.y * IG.instance.system.scale, 
+			this.layer.tiles.width * IG.instance.system.scale, 
+			this.layer.tiles.height * IG.instance.system.scale
 		);
-		ig.system.context.strokeRect( 
-			this.pos.x * ig.system.scale - 0.5, 
-			this.pos.y * ig.system.scale - 0.5, 
-			this.layer.tiles.width * ig.system.scale + 1, 
-			this.layer.tiles.height * ig.system.scale + 1
+		IG.instance.system.context.strokeRect( 
+			this.pos.x * IG.instance.system.scale - 0.5, 
+			this.pos.y * IG.instance.system.scale - 0.5, 
+			this.layer.tiles.width * IG.instance.system.scale + 1, 
+			this.layer.tiles.height * IG.instance.system.scale + 1
 		);
 		
 		this.layer.tiles.draw( this.pos.x, this.pos.y );
@@ -121,13 +122,13 @@ class TileSelect {
 			* this.layer.tilesize + this.pos.y 
 			+ (tile == -1 ? this.layer.tilesize : 0);
 		
-		ig.system.context.lineWidth = 1;
-		ig.system.context.strokeStyle = wm.config.colors.highlight;
-		ig.system.context.strokeRect( 
-			tx * ig.system.scale - 0.5, 
-			ty * ig.system.scale - 0.5, 
-			this.layer.tilesize * ig.system.scale + 1, 
-			this.layer.tilesize * ig.system.scale + 1
+		IG.instance.system.context.lineWidth = 1;
+		IG.instance.system.context.strokeStyle = Config.colors.highlight;
+		IG.instance.system.context.strokeRect( 
+			tx * IG.instance.system.scale - 0.5, 
+			ty * IG.instance.system.scale - 0.5, 
+			this.layer.tilesize * IG.instance.system.scale + 1, 
+			this.layer.tilesize * IG.instance.system.scale + 1
 		);
 	}
 	
@@ -138,13 +139,13 @@ class TileSelect {
 		
 		var r = this.getSelectionRect( x, y);
 		
-		ig.system.context.lineWidth = 1;
-		ig.system.context.strokeStyle = wm.config.colors.selection;
-		ig.system.context.strokeRect( 
-			(r.x * this.layer.tilesize + this.pos.x) * ig.system.scale - 0.5, 
-			(r.y * this.layer.tilesize + this.pos.y) * ig.system.scale - 0.5, 
-			r.w * this.layer.tilesize * ig.system.scale + 1, 
-			r.h * this.layer.tilesize * ig.system.scale + 1
+		IG.instance.system.context.lineWidth = 1;
+		IG.instance.system.context.strokeStyle = Config.colors.selection;
+		IG.instance.system.context.strokeRect( 
+			(r.x * this.layer.tilesize + this.pos.x) * IG.instance.system.scale - 0.5, 
+			(r.y * this.layer.tilesize + this.pos.y) * IG.instance.system.scale - 0.5, 
+			r.w * this.layer.tilesize * IG.instance.system.scale + 1, 
+			r.h * this.layer.tilesize * IG.instance.system.scale + 1
 		);
 	}
 

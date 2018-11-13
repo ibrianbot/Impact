@@ -177,7 +177,7 @@ class EditMap extends BackgroundMap {
 			this.ignoreLastClick = false;
 			return;
 		}
-		ig.editor.setActiveLayer( this.name );
+		IG.instance.editor.setActiveLayer( this.name );
 	}
 	
 	

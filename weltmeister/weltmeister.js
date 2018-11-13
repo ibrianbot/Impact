@@ -237,8 +237,8 @@ class Weltmeister {
 		this.screen.x -= x;
 		this.screen.y -= y;
 
-		this._rscreen.x = Math.round(this.screen.x * IG.instancesystem.scale)/IG.instance.system.scale;
-		this._rscreen.y = Math.round(this.screen.y * IG.instancesystem.scale)/IG.instance.system.scale;
+		this._rscreen.x = Math.round(this.screen.x * IG.instance.system.scale)/IG.instance.system.scale;
+		this._rscreen.y = Math.round(this.screen.y * IG.instance.system.scale)/IG.instance.system.scale;
 		for( var i = 0; i < this.layers.length; i++ ) {
 			this.layers[i].setScreenPos( this.screen.x, this.screen.y );
 		}
