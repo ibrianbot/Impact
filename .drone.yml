@@ -4,9 +4,16 @@ workspace:
 
 pipeline:
 
+  pack:
+    image: node
+    commands:
+      - npm install
+      - npm run buildwm
+
   build:
     image: drailing/go_packr_zip
     commands:
+      - cd weltmeister/api
       - GOOS=linux GOARCH=amd64 packr build -v -o ${DRONE_REPO_NAME}-${DRONE_TAG}-linux-amd64
       - GOOS=darwin GOARCH=amd64 packr build -v -o ${DRONE_REPO_NAME}-${DRONE_TAG}-darwin-amd64
       - GOOS=windows GOARCH=amd64 packr build -v -o ${DRONE_REPO_NAME}-${DRONE_TAG}-win-amd64.exe
@@ -18,6 +25,6 @@ pipeline:
   github_release:
     image: plugins/github-release
     secrets: [ github_token ]
-    files: release/*
+    files: weltmeister/api/release/*
     when:
       event: tag
