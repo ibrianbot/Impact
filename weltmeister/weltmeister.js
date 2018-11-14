@@ -285,6 +285,10 @@ class Weltmeister {
 		this.drag();
 		
 		for( var i in Image.cache ) {
+			if (!i){
+				console.warn("skipping Image in image cache, no path set")
+				continue
+			}
 			Image.cache[i].resize( Config.view.zoom );
 		}
 		
