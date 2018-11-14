@@ -51,6 +51,15 @@ func save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	err = ioutil.WriteFile(FILE_ROOT+path+"on", []byte(data), 0755)
+	if err != nil {
+		json.NewEncoder(w).Encode(SaveResponse{
+			Error: "2",
+			Msg:   err.Error(),
+		})
+		return
+	}
+
 	success := make(map[string]bool)
 	success["error"] = false
 	json.NewEncoder(w).Encode(success)

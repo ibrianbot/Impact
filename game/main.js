@@ -2,6 +2,9 @@ import Game from "../lib/game"
 import Font from "../lib/font"
 import IG from "../lib/impact"
 
+import Input from "../lib/input"
+
+const data = require("./levels/aaa.json")
 
 import Player from "./player"
 
@@ -14,7 +17,14 @@ class MyGame extends Game {
 		super()
 		// Initialize your game here; bind keys etc.
 
+		IG.instance.input.bind(Input.KEY.RIGHT_ARROW, "right")
+		IG.instance.input.bind(Input.KEY.LEFT_ARROW, "left")
+		IG.instance.input.bind(Input.KEY.UP_ARROW, "jump")
+		
+		this.loadLevel(data)
 		this.player = this.spawnEntity(Player, 20, 30)
+
+		this.gravity = 10
 
 	}
 	
