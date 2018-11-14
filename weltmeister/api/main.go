@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"log"
 
 	"github.com/cdreier/golang-snippets/snippets"
@@ -9,9 +10,18 @@ import (
 	"github.com/go-chi/cors"
 )
 
-const FILE_ROOT = "../../"
+var fileRoot = "./"
+
+// go build && ./api -port 8082 -root ../../
 
 func main() {
+
+	port := flag.String("port", "8081", "the port to start weltmeister on")
+	root := flag.String("root", "./", "the file root you start weltmeister")
+
+	fileRoot = *root
+
+	flag.Parse()
 
 	r := chi.NewRouter()
 
@@ -22,8 +32,8 @@ func main() {
 		r.Post("/save", save)
 	})
 
-	log.Println("starting api on port", "8082")
-	s := snippets.CreateHTTPServer(":8082", r)
+	log.Println("starting api on port", *port)
+	s := snippets.CreateHTTPServer(":"+*port, r)
 	if err := s.ListenAndServe(); err != nil {
 		log.Fatal("cannot start server", err)
 	}

@@ -32,11 +32,11 @@ func isImage(name string) bool {
 
 func browse(w http.ResponseWriter, r *http.Request) {
 
-	currentDir := FILE_ROOT
+	currentDir := fileRoot
 	urlDir := r.URL.Query().Get("dir")
 	fileType := r.URL.Query().Get("type")
 	if urlDir != "" {
-		currentDir = FILE_ROOT + urlDir
+		currentDir = fileRoot + urlDir
 	}
 
 	data, err := ioutil.ReadDir(currentDir)

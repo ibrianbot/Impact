@@ -42,7 +42,7 @@ func save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ioutil.WriteFile(FILE_ROOT+path, []byte(data), 0755)
+	err = ioutil.WriteFile(fileRoot+path, []byte(data), 0755)
 	if err != nil {
 		json.NewEncoder(w).Encode(SaveResponse{
 			Error: "2",
@@ -51,7 +51,7 @@ func save(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = ioutil.WriteFile(FILE_ROOT+path+"on", []byte(data), 0755)
+	err = ioutil.WriteFile(fileRoot+path+"on", []byte(data), 0755)
 	if err != nil {
 		json.NewEncoder(w).Encode(SaveResponse{
 			Error: "2",
