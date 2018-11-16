@@ -7,6 +7,7 @@ module.exports = {
     contentBase: __dirname + "/game",
     before: (app, server) => {
       app.use("/media", express.static('./media'));
+      app.use("/lib", express.static('./lib'));
     }
   },
   output: {
