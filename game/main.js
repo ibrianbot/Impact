@@ -1,4 +1,3 @@
-// import Debug from "../lib/debug/menu"
 import Game from "../lib/game"
 import Font from "../lib/font"
 import IG from "../lib/impact"
@@ -50,9 +49,8 @@ class MyGame extends Game {
 
 
 
-const instance = IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
+const instance = IG.createDebugInstance('#canvas', MyGame, 60, 320, 240, 2)
 
-// new Debug(instance)
 
 
 
