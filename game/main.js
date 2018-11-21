@@ -1,11 +1,10 @@
+import IG from "../lib/impact"
 import Game from "../lib/game"
 import Font from "../lib/font"
-import IG from "../lib/impact"
-
 import Input from "../lib/input"
 
-const data = require("./levels/aaa.json")
 
+const data = require("./levels/aaa.json")
 import Player from "./player"
 
 class MyGame extends Game {
@@ -47,10 +46,5 @@ class MyGame extends Game {
 	}
 }
 
-
-
-const instance = IG.createDebugInstance('#canvas', MyGame, 60, 320, 240, 2)
-
-
-
+export default MyGame
 

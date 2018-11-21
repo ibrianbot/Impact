@@ -3,6 +3,7 @@ const express = require("express")
 module.exports = {
   entry: "./index.js",
   mode: "development",
+  devtool: 'source-map',
   devServer: {
     contentBase: __dirname + "/game",
     before: (app, server) => {
