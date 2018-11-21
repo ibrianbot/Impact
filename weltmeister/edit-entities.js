@@ -1,4 +1,5 @@
 import IG from "../lib/impact"
+import {ig} from "../lib/igUtils"
 import Game from "../lib/game"
 import Weltmeister from "./weltmeister"
 import BackgroundMap from "../lib/background-map"
