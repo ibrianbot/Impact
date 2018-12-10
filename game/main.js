@@ -2,6 +2,7 @@ import IG from '../lib/impact'
 import Game from '../lib/game'
 import Font from '../lib/font'
 import Input from '../lib/input'
+// import { Sound } from '../lib/sound'
 
 
 const data = require('./levels/aaa.json')
@@ -11,11 +12,16 @@ class MyGame extends Game {
   
   // Load a font
   font = new Font('/media/04b03.font.png')
+
+  // bgmusic = new Sound('media/bg.*', false)
   
   constructor() {
     super()
     // Initialize your game here; bind keys etc.
 
+    // IG.instance.music.add(this.bgmusic)
+    // IG.instance.music.play()
+    
     IG.instance.input.bind(Input.KEY.RIGHT_ARROW, 'right')
     IG.instance.input.bind(Input.KEY.LEFT_ARROW, 'left')
     IG.instance.input.bind(Input.KEY.UP_ARROW, 'jump')
