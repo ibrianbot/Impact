@@ -107,7 +107,7 @@ const config = {
   // The tilesize only specifies the size in the image - resizing to final
   // size for each layer happens in Weltmeister.
   'collisionTiles': {
-    'path': 'weltmeister/collisiontiles-64.png',
+    'path': '/assets/collisiontiles-64.png',
     'tilesize': 64,
   },
   
@@ -117,7 +117,7 @@ const config = {
   'api': {
     'save': 'http://localhost:8082/weltmeister/api/save',
     'browse': 'http://localhost:8082/weltmeister/api/browse',
-    'glob': 'weltmeister/api/glob.php',
+    'glob': 'http://localhost:8082/weltmeister/api/glob',
   },
 }
 

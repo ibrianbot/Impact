@@ -6,7 +6,7 @@ import Input from '../lib/input'
 
 
 const data = require('./levels/aaa.json')
-import Player from './player'
+import PlayerEntity from './PlayerEntity'
 
 class MyGame extends Game {
   
@@ -27,7 +27,7 @@ class MyGame extends Game {
     IG.instance.input.bind(Input.KEY.UP_ARROW, 'jump')
     
     this.loadLevel(data)
-    this.player = this.spawnEntity(Player, 20, 30)
+    this.player = this.spawnEntity(PlayerEntity, 20, 30)
 
     this.gravity = 10
 

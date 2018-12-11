@@ -1,16 +1,9 @@
-const express = require('express')
+const webpack = require('webpack')
+
 
 module.exports = {
   entry: './index.js',
-  mode: 'development',
-  devtool: 'source-map',
-  devServer: {
-    contentBase: __dirname + '/game',
-    before: (app) => {
-      app.use('/media', express.static('./media'))
-      app.use('/lib', express.static('./lib'))
-    },
-  },
+  mode: 'production',
   output: {
     path: __dirname + '/dist',
     filename: 'bundle.js',
@@ -25,4 +18,11 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+      },
+    }),
+  ],
 }

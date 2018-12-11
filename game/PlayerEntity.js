@@ -2,7 +2,7 @@ import Entiy from '../lib/entity'
 import IG from '../lib/impact'
 import {AnimationSheet} from '../lib/animation'
 
-class Player extends Entiy {
+class PlayerEntity extends Entiy {
 
 
   constructor(x, y, settings){
@@ -47,4 +47,4 @@ class Player extends Entiy {
 
 }
 
-export default Player
+export default PlayerEntity
