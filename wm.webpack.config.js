@@ -7,7 +7,6 @@ module.exports = {
     contentBase: __dirname + '/weltmeister',
     before: (app) => {
       app.use('/media', express.static('./media'))
-      app.use('/game', express.static('./game'))
     },
   },
   output: {

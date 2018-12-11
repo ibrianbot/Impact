@@ -55,6 +55,8 @@ func main() {
 		t.Execute(w, indexData)
 	})
 	snippets.ChiFileServer(r, "/assets", rootbox)
+	snippets.ChiFileServer(r, "/game", http.Dir(fileRoot+"game"))
+	snippets.ChiFileServer(r, "/media", http.Dir(fileRoot+"media"))
 
 	log.Println("starting api on port", *port)
 	s := snippets.CreateHTTPServer(":"+*port, r)
