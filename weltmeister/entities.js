@@ -1,6 +1,8 @@
 import Config from './config'
 import Weltmeister from './weltmeister'
 
+// UNSUSED, this code moved to wm.index.js, with callback to start weltmeister
+
 // Load the list of entity files via AJAX PHP glob
 var path = Config.api.glob + '?',
   globs = typeof Config.project.entityFiles == 'string' ? 

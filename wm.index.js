@@ -1,7 +1,5 @@
 import Weltmeister, {WMLoader} from './weltmeister/weltmeister'
-import IG, {IGConfig} from './lib/impact'
-import System from './lib/system'
-import SoundManager from './lib/sound'
+import {IG, IGConfig, System, SoundManager} from 'impact'
 import EventedInput from './weltmeister/evented-input'
 import Config from './weltmeister/config'
 

@@ -1,4 +1,4 @@
-import Input from '../lib/input'
+import {Input} from 'impact'
 
 class EventedInput extends Input {
 

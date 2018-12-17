@@ -1,4 +1,4 @@
-import IG from '../lib/impact'
+import {IG} from 'impact'
 
 class Undo {
 

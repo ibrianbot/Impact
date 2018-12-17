@@ -55,13 +55,15 @@ func main() {
 		rr.Post("/save", save)
 	})
 
-	rootbox := packr.New("root", "../")
+	assetbox := packr.New("root", "./assets")
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-		content, _ := rootbox.FindString("api/index.html")
+		content, _ := assetbox.FindString("index.html")
 		t, _ := template.New("index").Parse(content)
 		t.Execute(w, indexData)
 	})
-	snippets.ChiFileServer(r, "/assets", rootbox)
+	snippets.ChiFileServer(r, "/assets", assetbox)
+	distbox := packr.New("wmdist", "../../dist")
+	snippets.ChiFileServer(r, "/wm/dist/", distbox)
 	snippets.ChiFileServer(r, "/game", http.Dir(fileRoot+"game"))
 	snippets.ChiFileServer(r, "/media", http.Dir(fileRoot+"media"))
 

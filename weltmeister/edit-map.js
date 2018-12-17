@@ -1,10 +1,7 @@
-import IG from '../lib/impact'
+import { IG, ig, BackgroundMap, Image } from 'impact'
 import Config from './config'
-import { ig } from '../lib/igUtils'
 
-import BackgroundMap from '../lib/background-map'
 import TileSelect from './tile-select'
-import Image from '../lib/image'
 
 class EditMap extends BackgroundMap {
   name = ''

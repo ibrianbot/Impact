@@ -1,5 +1,4 @@
-import IG from '../lib/impact'
-import {ig} from '../lib/igUtils'
+import {IG, ig} from 'impact'
 import Weltmeister from './weltmeister'
 import Config from './config'
 
