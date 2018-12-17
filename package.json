@@ -36,6 +36,6 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "impact": "file:impact"
+    "impact": "file:dist/impact"
   }
 }

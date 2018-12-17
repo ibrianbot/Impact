@@ -4,10 +4,12 @@ const webpack = require('webpack')
 module.exports = {
   entry: './wm.index.js',
   mode: 'production',
+  devtool: 'source-map',
   output: {
-    path: __dirname + '/dist',
-    filename: 'bundle.js',
-    publicPath: '/dist/',
+    path: __dirname + '/dist/weltmeister',
+    filename: 'weltmeister.bundle.js',
+    library: 'weltmeister',
+    libraryTarget: 'umd',
   },
   module: {
     rules: [

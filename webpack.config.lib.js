@@ -1,3 +1,5 @@
+const webpack = require('webpack')
+
 module.exports = {
   entry: {
     im: './lib/index.js',
@@ -5,7 +7,7 @@ module.exports = {
   mode: 'production',
   devtool: 'source-map',
   output: {
-    path: __dirname + '/impact',
+    path: __dirname + '/dist/impact',
     filename: 'impact.bundle.js',
     library: 'impact',
     libraryTarget: 'umd',
@@ -19,4 +21,11 @@ module.exports = {
       },
     ],
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': {
+        'NODE_ENV': JSON.stringify('production'),
+      },
+    }),
+  ],
 }
