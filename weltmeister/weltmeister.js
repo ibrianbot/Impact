@@ -1,7 +1,5 @@
 import Config from './config'
-import IG, {IGConfig} from '../lib/impact'
-import System from '../lib/system'
-import SoundManager from '../lib/sound'
+import IG from '../lib/impact'
 import ImpactImage from '../lib/image'
 import Loader from '../lib/loader'
 import EventedInput from './evented-input'
@@ -955,7 +953,7 @@ class Image extends ImpactImage {
 
 
 // Create a custom loader, to skip sound files and the run loop creation
-class WMLoader extends Loader {
+export class WMLoader extends Loader {
 
   end() {
     if (this.done) {
@@ -990,23 +988,6 @@ export default Weltmeister
 
 
 // IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
-
-
-const wmSystem = new System(
-  '#canvas', 1,
-  Math.floor(Weltmeister.getMaxWidth() / Config.view.zoom),
-  Math.floor(Weltmeister.getMaxHeight() / Config.view.zoom),
-  Config.view.zoom
-)
-
-
-const igConfig = new IGConfig()
-igConfig.system = wmSystem
-igConfig.input = new EventedInput(wmSystem)
-igConfig.soundManager = new SoundManager()
-
-IG.instance = new IG(igConfig, Weltmeister, WMLoader)
-
 
 // const ig = {
 // 	system: wmSystem, 

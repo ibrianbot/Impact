@@ -1,7 +1,10 @@
 const express = require('express')
 
 module.exports = {
-  entry: './index.js',
+  entry: {
+    game: './index.js',
+    entities: './entities.index.js',
+  },
   mode: 'development',
   devtool: 'source-map',
   devServer: {
@@ -13,7 +16,7 @@ module.exports = {
   },
   output: {
     path: __dirname + '/dist',
-    filename: 'bundle.js',
+    filename: '[name]bundle.js',
     publicPath: '/dist/',
   },
   module: {

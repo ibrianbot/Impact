@@ -76,26 +76,26 @@ class EditEntities {
   importEntityClass(modules) {
     var unloadedClasses = []
     for (var m in modules) {
-      var className = this.fileNameToClassName(modules[m])
+      var className = modules[m] //this.fileNameToClassName(modules[m])
       var entityName = className.replace(/^Entity/, '')
       
       // ig.global[className] should be the actual class object
-      if (className && ig.global[className]) {
+      // if (className && ig.global[className]) {
 
-        // Ignore entities that have the _wmIgnore flag
-        if (!ig.global[className].prototype._wmIgnore) {
-          var a = $('<div/>', {
-            'id': className,
-            'href': '#',
-            'html': entityName,
-            'mouseup': this.newEntityClick.bind(this),
-          })
-          this.menu.append(a)
-          this.entityClasses[className] = m
-        }
-      } else {
-        unloadedClasses.push(modules[m] + ' (expected name: ' + className + ')')
+      // Ignore entities that have the _wmIgnore flag
+      if (!(className)._wmIgnore) {
+        var a = $('<div/>', {
+          'id': className,
+          'href': '#',
+          'html': entityName,
+          'mouseup': this.newEntityClick.bind(this),
+        })
+        this.menu.append(a)
+        this.entityClasses[className] = m
       }
+      // } else {
+      //   unloadedClasses.push(modules[m] + ' (expected name: ' + className + ')')
+      // }
     }
 
     if (unloadedClasses.length > 0) {
@@ -327,7 +327,8 @@ class EditEntities {
   
   spawnEntity(className, x, y, settings) {
     settings = settings || {}
-    var entityClass = IG.instance.global[className]
+    var entityClass = window.window.igEntities[className]
+
     if (entityClass) {
       var newEntity = new (entityClass)(x, y, settings)
       newEntity._wmInEditor = true

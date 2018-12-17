@@ -23,15 +23,21 @@ func main() {
 
 	port := flag.String("port", "8081", "the port to start weltmeister on")
 	dev := flag.Bool("dev", false, "dev server?")
+	igserver := flag.String("igserver", "http://localhost:8080", "impact webpack server url")
 	root := flag.String("root", "./", "the file root you start weltmeister")
 	flag.Parse()
 	fileRoot = *root
 
+	snippets.EnsureDir(fileRoot + "/wmcache")
+
 	type indexTemplateData struct {
 		DevServer string
+		IGServer  string
 	}
 
-	indexData := indexTemplateData{}
+	indexData := indexTemplateData{
+		IGServer: *igserver,
+	}
 
 	if *dev {
 		indexData.DevServer = "http://localhost:8081"
@@ -45,6 +51,7 @@ func main() {
 	r.Route("/weltmeister/api/", func(rr chi.Router) {
 		rr.Use(corsMiddleware())
 		rr.Get("/browse", browse)
+		rr.Get("/glob", glob)
 		rr.Post("/save", save)
 	})
 
