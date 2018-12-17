@@ -1,8 +1,6 @@
-import Entiy from '../lib/entity'
-import IG from '../lib/impact'
-import {AnimationSheet} from '../lib/animation'
+import {Entity, IG, AnimationSheet} from 'impact'
 
-class PlayerEntity extends Entiy {
+class PlayerEntity extends Entity {
 
 
   constructor(x, y, settings){

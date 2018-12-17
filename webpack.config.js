@@ -3,7 +3,6 @@ const express = require('express')
 module.exports = {
   entry: {
     game: './index.js',
-    entities: './entities.index.js',
   },
   mode: 'development',
   devtool: 'source-map',

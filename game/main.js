@@ -1,9 +1,5 @@
-import IG from '../lib/impact'
-import Game from '../lib/game'
-import Font from '../lib/font'
-import Input from '../lib/input'
+import {IG, Game, Font, Input} from 'impact'
 // import { Sound } from '../lib/sound'
-
 
 const data = require('./levels/aaa.json')
 import PlayerEntity from './PlayerEntity'
