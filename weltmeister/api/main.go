@@ -28,8 +28,6 @@ func main() {
 	flag.Parse()
 	fileRoot = *root
 
-	snippets.EnsureDir(fileRoot + "/wmcache")
-
 	type indexTemplateData struct {
 		DevServer string
 		IGServer  string
