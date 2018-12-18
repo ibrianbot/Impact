@@ -2,9 +2,16 @@
 import {Weltmeister, WMLoader, EventedInput, Config} from 'weltmeister'
 import {IG, IGConfig, System, SoundManager} from 'impact'
 
-import PlayerEntity from './game/PlayerEntity'
+{{ range $k, $e := . }}
+import {{$e.Name}} from '{{$e.Path}}/{{$e.Name}}{{$e.Ext}}'
+{{ end }}
 
+window.igEntities = {}
+{{ range $k, $e := . }}
+window.igEntities['{{$e.Name}}'] = {{$e.Name}}
+{{ end }}
 
+// construct and start weltmeister
 const wmSystem = new System(
   '#canvas', 1,
   Math.floor(Weltmeister.getMaxWidth() / Config.view.zoom),
@@ -23,6 +30,3 @@ fetch(Config.api.glob)
     Weltmeister.entityModules = modules 
     IG.instance = new IG(igConfig, Weltmeister, WMLoader)
   })
-
-window.igEntities = {}
-window.igEntities['PlayerEntity'] = PlayerEntity
