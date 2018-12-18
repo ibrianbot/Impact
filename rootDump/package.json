@@ -5,10 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "webpack-dev-server --watch --inline --colors --port 8080",
-    "startwm": "webpack-dev-server --config wm.webpack.config.js --watch --inline --colors --port 8081",
     "build": "webpack --config webpack.config.prod.js --progress -p",
-    "buildwm": "webpack --config wm.webpack.config.prod.js --progress -p",
-    "buildimpact": "webpack --config webpack.config.lib.js --progress -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -35,7 +32,7 @@
     "webpack-dev-server": "^3.1.10"
   },
   "dependencies": {
-    "impact": "file:dist/impact",
-    "weltmeister": "file:dist/weltmeister"
+    "impact": "file:lib",
+    "weltmeister": "file:weltmeister"
   }
 }
