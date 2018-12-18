@@ -26,11 +26,11 @@ func bootstrapImpact() {
 		log.Fatal("target folder has already javascript files, to initialize new game, please choose an empty folder")
 	}
 
-	gameBox := packr.New("gameDump", "./game")
-	wmBox := packr.New("gameDump", "./weltmeister")
-	libBox := packr.New("libDump", "./lib")
-	mediaBox := packr.New("mediaDump", "./media")
-	rootBox := packr.New("rootDump", "./rootDump")
+	gameBox := packr.New("gameDump", "../game")
+	wmBox := packr.New("wmDump", "../weltmeister")
+	libBox := packr.New("libDump", "../lib")
+	mediaBox := packr.New("mediaDump", "../media")
+	rootBox := packr.New("rootDump", "../rootDump")
 
 	snippets.EnsureDir(fileRoot + "media")
 	snippets.EnsureDir(fileRoot + "game")
