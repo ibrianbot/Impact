@@ -10,9 +10,9 @@ module.exports = {
     },
   },
   output: {
-    path: __dirname + '/wm/dist',
+    path: __dirname + '/dist',
     filename: 'bundle.js',
-    publicPath: '/wm/dist/',
+    publicPath: '/dist/',
   },
   module: {
     rules: [

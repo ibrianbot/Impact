@@ -2,7 +2,7 @@ const webpack = require('webpack')
 
 
 module.exports = {
-  entry: './wm.index.js',
+  entry: './weltmeister/index.js',
   mode: 'production',
   devtool: 'source-map',
   output: {
@@ -27,4 +27,11 @@ module.exports = {
       },
     }),
   ],
+  externals: {
+    impact: {
+      commonjs: 'impact',
+      commonjs2: 'impact',
+      amd: 'impact',
+    },
+  },
 }

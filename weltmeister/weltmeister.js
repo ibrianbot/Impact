@@ -1,5 +1,6 @@
-import {IG, Image as ImpactImage, Loader } from 'impact'
+import {IG, Image as ImpactImage, Loader, ig } from 'impact'
 import EventedInput from './evented-input'
+import {Sound} from 'impact'
 import Config from './config'
 import EditMap from './edit-map'
 import EditEntities from './edit-entities'

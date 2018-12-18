@@ -115,9 +115,9 @@ const config = {
   // different backend (i.e. not the official PHP backend), you may have
   // to change these.
   'api': {
-    'save': 'http://localhost:8082/weltmeister/api/save',
-    'browse': 'http://localhost:8082/weltmeister/api/browse',
-    'glob': 'http://localhost:8082/weltmeister/api/glob',
+    'save': '/weltmeister/api/save',
+    'browse': '/weltmeister/api/browse',
+    'glob': '/weltmeister/api/glob',
   },
 }
 

@@ -1,7 +1,8 @@
-import Weltmeister, {WMLoader} from './weltmeister/weltmeister'
+// generated file! do not edit, in case of failure, restart weltmeister
+import {Weltmeister, WMLoader, EventedInput, Config} from 'weltmeister'
 import {IG, IGConfig, System, SoundManager} from 'impact'
-import EventedInput from './weltmeister/evented-input'
-import Config from './weltmeister/config'
+
+import PlayerEntity from './game/PlayerEntity'
 
 
 const wmSystem = new System(
@@ -23,3 +24,6 @@ fetch(Config.api.glob)
     IG.instance = new IG(igConfig, Weltmeister, WMLoader)
   })
 
+
+window.igEntities = {}
+window.igEntities['PlayerEntity'] = PlayerEntity

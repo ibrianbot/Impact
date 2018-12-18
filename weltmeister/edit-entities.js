@@ -1,4 +1,4 @@
-import {IG, ig} from 'impact'
+import {IG, ig, Game} from 'impact'
 import Weltmeister from './weltmeister'
 import Config from './config'
 
@@ -53,7 +53,7 @@ class EditEntities {
   
   
   sort() {
-    this.entities.sort(IG.instance.Game.SORT.Z_INDEX)
+    this.entities.sort(Game.SORT.Z_INDEX)
   }
   
   
@@ -625,7 +625,7 @@ class EditEntities {
       )
       
       // text
-      IG.instance.system.context.fillStyle = wm.config.colors.primary
+      IG.instance.system.context.fillStyle = Config.colors.primary
       IG.instance.system.context.fillText(
         description,
         IG.instance.system.getDrawPos(ent.pos.x - IG.instance.game.screen.x), 
@@ -669,12 +669,12 @@ class EditEntities {
   drawCursor(x, y) {
     if (this.selectedEntity) {
       IG.instance.system.context.lineWidth = 1
-      IG.instance.system.context.strokeStyle = wm.config.colors.highlight
+      IG.instance.system.context.strokeStyle = Config.colors.highlight
       IG.instance.system.context.strokeRect( 
         IG.instance.system.getDrawPos(this.selectedEntity.pos.x - IG.instance.editor.screen.x) - 0.5, 
         IG.instance.system.getDrawPos(this.selectedEntity.pos.y - IG.instance.editor.screen.y) - 0.5, 
-        IG.instance.selectedEntity.size.x * IG.instance.system.scale + 1, 
-        IG.instance.selectedEntity.size.y * IG.instance.system.scale + 1
+        this.selectedEntity.size.x * IG.instance.system.scale + 1, 
+        this.selectedEntity.size.y * IG.instance.system.scale + 1
       )
     }
   }

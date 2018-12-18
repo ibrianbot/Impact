@@ -1,5 +1,14 @@
 {
-	"entities": [],
+	"entities": [
+		{
+			"type": "PlayerEntity",
+			"x": 68,
+			"y": 68,
+			"settings": {
+				"aa": "bb"
+			}
+		}
+	],
 	"layer": [
 		{
 			"name": "collision",
