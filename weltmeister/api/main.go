@@ -31,6 +31,9 @@ func main() {
 
 	if *shouldBootstrap {
 		bootstrapImpact()
+		log.Println("succesfully bootstrapped new game!")
+		log.Println("now run npm install")
+		return
 	}
 
 	type indexTemplateData struct {
