@@ -42,14 +42,10 @@ func bootstrapImpact() {
 }
 
 func dumpBox(box *packr.Box, folder string) {
-
-	log.Println("dumping box", folder)
-
 	box.Walk(func(path string, packrFile packd.File) error {
 		folder = strings.TrimSuffix(folder, "/")
 		absPath := fmt.Sprintf("%s/%s", folder, path)
 
-		log.Println("abspath", absPath)
 		snippets.EnsureDir(filepath.Dir(absPath))
 
 		file, err := os.OpenFile(absPath, os.O_CREATE|os.O_RDWR, 0644)

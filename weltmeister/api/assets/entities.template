@@ -1,0 +1,8 @@
+//this is a generated file! 
+{{ range $k, $e := . }}
+import {{$e.Name}} from './{{$e.Path}}/{{$e.Name}}{{$e.Ext}}'
+{{ end }}
+window.igEntities = {}
+{{ range $k, $e := . }}
+window.igEntities['{{$e.Name}}'] = {{$e.Name}}
+{{ end }}

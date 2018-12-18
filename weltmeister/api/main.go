@@ -69,7 +69,7 @@ func main() {
 	if err != nil {
 		log.Panic("cannot collect entities on startup", err.Error())
 	}
-	writeWeltmeisterStarter(entities)
+	writeEntitiesFile(entities)
 
 	log.Println("starting api on port", *port)
 	s := snippets.CreateHTTPServer(":"+*port, r)
@@ -92,18 +92,18 @@ func corsMiddleware() func(h http.Handler) http.Handler {
 	return cors.Handler
 }
 
-func writeWeltmeisterStarter(entities []IGEntity) {
+func writeEntitiesFile(entities []IGEntity) {
 	assetbox := packr.New("root", "./assets")
-	t, _ := assetbox.FindString("start.weltmeister.template")
+	t, _ := assetbox.FindString("entities.template")
 
 	tmpl, err := template.New("startwm").Parse(t)
 	if err != nil {
-		log.Panic("cannot parse embedded weltmeister template", err.Error())
+		log.Panic("cannot parse embedded entities template", err.Error())
 	}
 
-	file, err := os.OpenFile(fileRoot+"start.weltmeister.js", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
+	file, err := os.OpenFile(fileRoot+"entities.generated.js", os.O_CREATE|os.O_RDWR|os.O_TRUNC, 0644)
 	if err != nil {
-		log.Panic("cannot open start.weltmeister.js file", err.Error())
+		log.Panic("cannot open entities.generated.js file", err.Error())
 	}
 
 	tmpl.Execute(file, entities)

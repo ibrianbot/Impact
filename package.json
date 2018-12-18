@@ -7,6 +7,7 @@
     "start": "webpack-dev-server --watch --inline --colors --port 8080",
     "startwm": "webpack-dev-server --config wm.webpack.config.js --watch --inline --colors --port 8081",
     "build": "webpack --config webpack.config.prod.js --progress -p",
+    "buildall": "npm run buildimpact && npm run buildwm",
     "buildwm": "webpack --config wm.webpack.config.prod.js --progress -p",
     "buildimpact": "webpack --config webpack.config.lib.js --progress -p",
     "test": "echo \"Error: no test specified\" && exit 1"

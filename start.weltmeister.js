@@ -1,15 +1,6 @@
-// generated file! do not edit, in case of failure, restart weltmeister
 import {Weltmeister, WMLoader, EventedInput, Config} from 'weltmeister'
 import {IG, IGConfig, System, SoundManager} from 'impact'
-
-
-import PlayerEntity from './game/PlayerEntity.js'
-
-
-window.igEntities = {}
-
-window.igEntities['PlayerEntity'] = PlayerEntity
-
+import './entities.generated'
 
 // construct and start weltmeister
 const wmSystem = new System(
