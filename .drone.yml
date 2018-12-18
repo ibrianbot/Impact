@@ -4,16 +4,10 @@ workspace:
 
 pipeline:
 
-  pack:
-    image: node
-    commands:
-      - npm install
-      - npm run buildwm
-
   build:
     image: drailing/go_packr_zip
     commands:
-      - cd weltmeister/api
+      - cd api
       - go get
       - GOOS=linux GOARCH=amd64 packr2 build -v -o ${DRONE_REPO_NAME}-${DRONE_TAG}-linux-amd64
       - GOOS=darwin GOARCH=amd64 packr2 build -v -o ${DRONE_REPO_NAME}-${DRONE_TAG}-darwin-amd64
