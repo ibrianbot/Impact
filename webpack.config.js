@@ -28,4 +28,10 @@ module.exports = {
       },
     ],
   },
+  watchOptions: {
+    ignored: [
+      /game\/levels\/.*/, 
+      /node_modules/,
+    ],
+  },
 }
