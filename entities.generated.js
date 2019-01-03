@@ -1,7 +1,6 @@
 
 
-import PlayerEntity from '././game/PlayerEntity.js'
-
+import PlayerEntity from './box2dgame/PlayerEntity'
 
 window.igEntities = {}
 
