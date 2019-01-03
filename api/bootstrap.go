@@ -15,7 +15,7 @@ import (
 	packr "github.com/gobuffalo/packr/v2"
 )
 
-func bootstrapImpact() {
+func bootstrapImpact(b2dGame bool) {
 
 	matches, err := zglob.Glob(fileRoot + "/**/*.js")
 	if err != nil {
@@ -27,6 +27,7 @@ func bootstrapImpact() {
 	}
 
 	gameBox := packr.New("gameDump", "../game")
+	b2dGameBox := packr.New("b2dGameDump", "../box2dgame")
 	wmBox := packr.New("wmDump", "../weltmeister")
 	libBox := packr.New("libDump", "../lib")
 	mediaBox := packr.New("mediaDump", "../media")
@@ -41,7 +42,11 @@ func bootstrapImpact() {
 	dumpBox(libBox, fileRoot+"lib")
 	dumpBox(mediaBox, fileRoot+"media")
 	dumpBox(wmBox, fileRoot+"weltmeister")
-	dumpBox(gameBox, fileRoot+"game")
+	if b2dGame {
+		dumpBox(b2dGameBox, fileRoot+"game")
+	} else {
+		dumpBox(gameBox, fileRoot+"game")
+	}
 }
 
 func dumpBox(box *packr.Box, folder string) {

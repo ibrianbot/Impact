@@ -28,12 +28,13 @@ func main() {
 	root := flag.String("root", "./", "the file root you start weltmeister")
 	game := flag.String("game", "game", "the name of the game-folder")
 	shouldBootstrap := flag.Bool("new", false, "start with --new flag to bootstrap new game")
+	booxtrapBox2d := flag.Bool("b2d", false, "only works with new flag, bootstraps a box2d game instead default impact game")
 	flag.Parse()
 	fileRoot = *root
 	gameFolder = *game
 
 	if *shouldBootstrap {
-		bootstrapImpact()
+		bootstrapImpact(*booxtrapBox2d)
 		log.Println("succesfully bootstrapped new game!")
 		log.Println("now run npm install")
 		return
