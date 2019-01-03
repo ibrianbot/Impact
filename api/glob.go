@@ -36,7 +36,7 @@ type IGEntity struct {
 }
 
 func collectEntities() ([]IGEntity, error) {
-	matches, err := zglob.Glob(fileRoot + "/game/**/*Entity*.js")
+	matches, err := zglob.Glob(fileRoot + "/" + gameFolder + "/**/*Entity*.js")
 
 	if err != nil {
 		return nil, err

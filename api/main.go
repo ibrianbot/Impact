@@ -17,6 +17,7 @@ import (
 )
 
 var fileRoot = "./"
+var gameFolder = "game"
 
 // go build && ./api -port 8082 -dev -root ../../
 
@@ -25,9 +26,11 @@ func main() {
 	port := flag.String("port", "8081", "the port to start weltmeister on")
 	igserver := flag.String("igserver", "http://localhost:8080", "impact webpack server url")
 	root := flag.String("root", "./", "the file root you start weltmeister")
+	game := flag.String("game", "game", "the name of the game-folder")
 	shouldBootstrap := flag.Bool("new", false, "start with --new flag to bootstrap new game")
 	flag.Parse()
 	fileRoot = *root
+	gameFolder = *game
 
 	if *shouldBootstrap {
 		bootstrapImpact()
@@ -62,7 +65,7 @@ func main() {
 		t.Execute(w, indexData)
 	})
 	snippets.ChiFileServer(r, "/assets", assetbox)
-	snippets.ChiFileServer(r, "/game", http.Dir(fileRoot+"game"))
+	snippets.ChiFileServer(r, "/game", http.Dir(fileRoot+gameFolder))
 	snippets.ChiFileServer(r, "/media", http.Dir(fileRoot+"media"))
 
 	entities, err := collectEntities()

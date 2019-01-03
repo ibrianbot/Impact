@@ -4,4 +4,4 @@ import './entities.generated'
 
 
 const instance = IG.createInstance('#canvas', MyGame, 60, 320, 240, 2)
-// Debug.createDebugger(instance)
+Debug.createDebugger(instance)

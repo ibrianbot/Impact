@@ -2,7 +2,14 @@ import {Box2DEntity, IG, AnimationSheet, Box2DUtils} from 'impact'
 
 class PlayerEntity extends Box2DEntity {
 
+  size = {x: 8, y: 14}
+  offset = {x: 4, y: 2}
+  
+  type = Box2DEntity.TYPE.A
+  checkAgainst = Box2DEntity.TYPE.NONE
   collides = Box2DEntity.COLLIDES.NEVER
+
+  flip = false
 
   constructor(x, y, settings){
     super(x, y, settings)
@@ -11,6 +18,8 @@ class PlayerEntity extends Box2DEntity {
 
     this.addAnim('idle', 0.1, [0])
     this.addAnim('jump', 0.1, [1, 2])
+
+    this.createBody() // this is important!
   }
 
   update(){

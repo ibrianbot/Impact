@@ -7,6 +7,31 @@
 			"settings": {
 				"aa": "bb"
 			}
+		},
+		{
+			"type": "CrateEntity",
+			"x": 172,
+			"y": 88
+		},
+		{
+			"type": "CrateEntity",
+			"x": 180,
+			"y": 76
+		},
+		{
+			"type": "CrateEntity",
+			"x": 184,
+			"y": 88
+		},
+		{
+			"type": "CrateEntity",
+			"x": 196,
+			"y": 88
+		},
+		{
+			"type": "CrateEntity",
+			"x": 180,
+			"y": 64
 		}
 	],
 	"layer": [
