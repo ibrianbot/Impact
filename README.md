@@ -120,7 +120,11 @@ your game bundle is now in the `dist` folder
 ## CLI flags
 
 ```
-Usage of ./Impact-v0.0.1-linux-amd64:
+Usage of ./Impact-v0.0.2-linux-amd64:
+  -b2d
+    	only works with new flag, bootstraps a box2d game instead default impact game
+  -game string
+    	the name of the game-folder (default "game")
   -igserver string
     	impact webpack server url (default "http://localhost:8080")
   -new
@@ -128,5 +132,5 @@ Usage of ./Impact-v0.0.1-linux-amd64:
   -port string
     	the port to start weltmeister on (default "8081")
   -root string
-    	the file root you running your game and weltmeister (default "./")
+    	the file root you start weltmeister (default "./")
 ```
