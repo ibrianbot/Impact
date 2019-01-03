@@ -20,4 +20,5 @@ fetch(Config.api.glob)
   .then(modules => {
     Weltmeister.entityModules = modules 
     IG.instance = new IG(igConfig, Weltmeister, WMLoader)
+    IG.instance.global.wm = true
   })
