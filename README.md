@@ -30,17 +30,22 @@ now you install all the dev-dependencies with `npm install`.
 > 
 >i completely removed the ig.module system and replaced it with native javascript classes - but this classes are transpiled with webpack and babel - and webpack only loads classes that are referenced in your code.
 >
-> that everything is working properly (also in weltmeister), my first idea was to generate a file, that loads all entities - this is doing the CLI for you.
+> to get everything working properly (also in weltmeister), my first idea was to generate a file, that loads all entities - this is doing the CLI for you.
 
-to generate the entity file, just start the CLI `./Impact-vXXX`
+### cli
 
-this also starts a webserver (default on port 8081) where weltmeister is running
+the cli is for 2 reasons important:
+
+* it starts a local webserver where the weltmeister api is running
+* it generates the entity file for weltmeister
+
+### webpack
 
 as everything is generated, we can start webpack with `npm start` (webpack serves the game and weltmeister bundle)
 
-the impact game is running on localhost:8080
+the impact game is running on http://localhost:8080
 
-weltmeister is running on localhost:8081
+weltmeister is running on http://localhost:8081
 
 the entry-point is the `index.js` file
 
