@@ -14,6 +14,8 @@ now, impact is open source - and i tried to bring it to 2018, to the shiny new j
 
 ## Kick it off
 
+![demo gif](https://raw.githubusercontent.com/cdreier/Impact/master/demo/impact-intro-sm.gif)
+
 To make it as easy as possible, i created a small CLI binary to get you up and running in no time. 
 
 Grab it from the [release page](https://github.com/cdreier/Impact/releases/latest)
